@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Nominate a young achiever at the University of Benin for the TOYP UNIBEN Award. Celebrate outstanding individuals making a difference."
+    />
+
+  <title>TOYP UNIBEN - Nominate</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+
+    <link rel="stylesheet" href="/styles/nomination.css" />
+
+  </head>
+  <body>
+
+     <header>
+      <a href="/" class="logo">
+        <img src="images/toyp.png" alt="TOYP UNIBEN Logo" />
+      </a>
+
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li class="dropdown">
+            <a href="">TOYP Directors</a>
+            <ul class="dropdown-menu">
+              <li><a href="">2023 TOYP</a></li>
+              <li><a href="/directors.html">2026 TOYP</a></li>
+            </ul>
+          </li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+         <a href="nomination.html" class="mobile-contact-btn ">
+              Nominate
+            </a>
+      </nav>
+
+      <a href="nomination.html" class="desktop-contact-btn btn">
+        Nominate
+      </a>
+    </header>
+   
+
+    <section class="nominate fade-in  ">
+      <h1>Nominate a Young Achiever for TOYP UNIBEN</h1>
+      <p>
+        The TOYP UNIBEN awards recognizes exceptional young individuals at the
+        University of Benin. Nominate someone (Undergraduate) who exemplifies
+        leadership innovation or social impact for this prestigious recognition.
+      </p>
+
+      <div class="nomination-form">
+        <h2>Nomination Form</h2>
+        <p>Please fill in the form below to nominate a candidate:</p>
+
+        <!-- started working local host had to remove form action link to avoid uncessary submits -->
+        <!-- https://formsubmit.co/toypuniben@gmail.com -->
+        
+        
+
+
+   
+
+           <form action="" id="nomination-form" method="POST">
+          <!-- <form id="nomination-form" method="POST"> -->
+           
+            <!-- nomination form step 1 -->
+          <div class="step nomination-form-step-1">
+
+          <label for="nominee-name">Nominee Full Name:</label>
+          <input 
+            type="text" 
+            id="nominee-name" 
+            name="nominee-name" 
+            required
+            placeholder="Eg: John Doe"
+            data-error-id="nominee-name-error"
+             />
+             <span 
+              id="nominee-name-error"
+              class="error-message" 
+              data-error-id="nominee-name-error"></span>
+          
+          <label for="nominee-email">Email of Nominee:</label>
+          <input
+            type="email"
+            id="nominee-email"
+            name="nominee_email"
+            placeholder="Eg: johndoe@gmail.com"
+            required
+            data-error-id="nominee-email-error"
+          />
+          <span 
+           id="nominee-email-error"
+           class="error-message" 
+           data-error-id="nominee-email-error"></span>
+
+          <label for="nominator-email">Your Email:</label>
+          <input
+            type="email"
+            id="nominator-email"
+            name="nominator_email"
+            placeholder="example@email.com"
+            required
+            data-error-id="nominator-email-error"
+          />
+          <span 
+           id="nominator-email-error"
+           class="error-message" 
+           data-error-id="nominator-email-error"></span>
+
+          <label for="gender">Gender of Nominee:</label>
+          <select id="gender" name="gender" data-error-id="nominee-gender-error" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          <span 
+            class="error-message"
+            id="gender-error"
+            data-error-id="nominee-gender-error">
+          </span>
+
+          </div>
+           
+          <!-- nomination form step 2 -->
+          <div class="step nomination-form-step-2">
+          <label for="whatsapp-contact">WhatsApp Contact of Nominee:</label>
+          <input
+            type="tel"
+            id="whatsapp-contact"
+            name="whatsapp_contact"
+            required
+            maxlength="11"
+            data-error-id="whatsapp-error"
+          />
+              <span 
+              id="whatsapp-error"
+              class="error-message" 
+              data-error-id="whatsapp-error"></span>
+
+          <label for="other-contact">
+            Other Contact of Nominee: <span style="color: red;">*optional</span>
+          </label>
+          <input 
+            type="tel" 
+            id="other-contact" 
+            name="other_contact"
+            maxlength="11" 
+            data-error-id="other-contact-error"
+            />
+              <span 
+              id="other-contact-error"
+              class="error-message" 
+              data-error-id="other-contact-error"></span>
+
+          <label for="faculty">Faculty of Nominee:</label>
+          <select data-error-id="faculty-error" id="faculty" name="faculty" required>
+            <option value="">Select Faculty</option>
+            <option value="Faculty of Arts">Faculty of Arts</option>
+            <option value="Faculty of Agriculture">
+              Faculty of Agriculture
+            </option>
+            <option value="Basic Medical science">Basic Medical science</option>
+            <option value="School of Dentistry">School of Dentistry</option>
+            <option value="Faculty of Education">Faculty of Education</option>
+            <option value="Faculty of Engineering">
+              Faculty of Engineering
+            </option>
+            <option value="Faculty of Environmental science">
+              Faculty of Environmental science
+            </option>
+            <option value="Faculty of Law">Faculty of Law</option>
+            <option value="Faculty of Management science">
+              Faculty of Management science
+            </option>
+            <option value="Faculty of Pharmacy">Faculty of Pharmacy</option>
+            <option value="Faculty of Physical science">
+              Faculty of Physical science
+            </option>
+            <option value="Faculty of Social science">
+              Faculty of Social science
+            </option>
+            <option value="School of Medical science">
+              School of Medical science
+            </option>
+            <option value="College of Medicine">College of Medicine</option>
+            <option value="Veterinary Medicine">Veterinary Medicine</option>
+            <option value="Faculty of Life Science">
+              Faculty of Life Science
+            </option>
+            <option value="Other">Other</option>
+          </select>
+               <span 
+              id="faculty-error"
+              class="error-message" 
+              data-error-id="faculty-error"></span>
+          
+
+          <label for="department">Department of Nominee:</label>
+          <input type="text" id="department" data-error-id="department-error"  name="department" required />
+            <span 
+              id="department-error"
+              class="error-message" 
+              data-error-id="department-error"></span>
+          </div>
+           
+          <!-- nomination from step 3 -->
+          <div class="step nomination-form-step-3">
+          <label for="level">Level of Nominee:</label>
+          <input 
+            type="number" 
+            step="100" 
+            min="100" 
+            max="600" 
+            id="level" 
+            name="level" 
+            data-error-id="level-error"
+            required 
+            />
+             <span 
+              id="level-error"
+              class="error-message" 
+              data-error-id="level-error"></span>
+
+          <label for="category">Category:</label>
+          <select id="category" name="category"  data-error-id="category-error" required>
+            <option value="">Select Category</option>
+            <option value="Business and Entrepreneurship Excellence">
+             Business & Entrepreneurship Excellence-
+            </option>
+            <option value="Political & Governance Impact">
+              Leadership in Politics & Student Governance-
+            </option>
+            <option value="Academic and Intellectual Achievements">
+              Academic and Intellectual Achievement
+            </option>
+            <option value="Art & Creative Innovation">
+              Art, Culture & Creative Expression
+            </option>
+            <option value="Sports Achievement">Sports & Athletic Excellence</option>
+            <option value="Voluntary Leadership and Humanitarian services">
+              Volunteering & Humanitarian Service
+            </option>
+            <option value="Personal Development and Self improvement">
+              Health & Wellness Advocacy
+            </option>
+            <option value="Health & Medical Impact">
+             Digital Media & Influencer Impact
+            </option>
+            <option value="Social & Community Influence">
+              Tech & Innovation Leadership
+            </option>
+            <option value="Digital Media Presence">
+              Personal development and Self improvement
+            </option>
+          </select>
+            <span 
+              id="category-error"
+              class="error-message" 
+              data-error-id="category-error"></span>
+
+          <label for="social-media-handle"
+            >Social Media Handle of Nominee:</label
+          >
+          <input
+            type="text"
+            id="social-media-handle"
+            name="social_media_handle"
+            placeholder="@yourhandle"
+            data-error-id="social-media-handle-error"
+            required
+          />
+           <span 
+              id="social-media-handle-error"
+              class="error-message" 
+              data-error-id="social-media-handle-error"></span>
+
+          <label for="reason">Reason for Nomination:</label>
+          <textarea id="reason" name="reason" rows="4" data-error-id="reason-error" required></textarea>
+           <span 
+              id="reason-error"
+              class="error-message" 
+              data-error-id="reason-error"></span>
+
+          <!-- <input
+            type="hidden"
+            name="_next"
+            value="https://jcin-uniben-toyp-25.vercel.app/thankuu.html"
+          />
+          <input type="hidden" name="_captcha" value="false" /> -->
+
+          </div>
+
+          <!-- nomination form navigation btn container-->
+          <div class="nomination-form-navigation-container">
+            <button type="button" id="back-btn">Back</button>
+            <button 
+             type="button" 
+             id="next-btn"
+             >
+             Next
+            </button>
+          </div>
+
+          </form>
+    
+
+        <!-- <div
+          id="confirmation-message"
+          style="
+            display: none;
+            color: green;
+            text-align: center;
+            margin-top: 20px;
+          "
+        >
+          <h3>Thank you for your nomination!</h3>
+          <p>
+            Your submission has been successfully received. The nominee will be
+            contacted soon.
+          </p> -->
+        </div>
+      </div>
+    </section>
+    <!-- <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const nominationForm = document.getElementById("nomination-form-main");
+        const submitButton = document.getElementById("submit-button");
+        const statusMessage = document.getElementById("status-message");
+        const nominatorEmailInput = document.getElementById("nominator-email");
+
+        // Define a unique key prefix for local storage specific to this form/purpose
+        const NOMINATION_LOCAL_STORAGE_PREFIX =
+          "toyp_uniben_nomination_status_";
+
+        // Function to encode email for localStorage key (basic, not for security)
+        function encodeEmailForLS(email) {
+          return btoa(encodeURIComponent(email.toLowerCase().trim()));
+        }
+
+        // Function to check if a user with this email has already submitted
+        function hasUserSubmitted(encodedEmailKey) {
+          const itemStr = localStorage.getItem(
+            NOMINATION_LOCAL_STORAGE_PREFIX + encodedEmailKey
+          );
+          if (!itemStr) return false;
+
+          try {
+            const item = JSON.parse(itemStr);
+            const now = new Date().getTime();
+            // Check if item exists and is not expired
+            if (
+              item.value === "submitted" &&
+              item.expiry &&
+              item.expiry > now
+            ) {
+              return true;
+            } else {
+              // Remove expired item
+              localStorage.removeItem(
+                NOMINATION_LOCAL_STORAGE_PREFIX + encodedEmailKey
+              );
+              return false;
+            }
+          } catch (e) {
+            // Handle potential parsing errors if item is not valid JSON
+            localStorage.removeItem(
+              NOMINATION_LOCAL_STORAGE_PREFIX + encodedEmailKey
+            );
+            return false;
+          }
+        }
+
+        // Function to mark a user as having submitted
+        function markUserAsSubmitted(encodedEmailKey) {
+          // Set for 24 hours (86400000 milliseconds) as an example expiry
+          const now = new Date();
+          const item = {
+            value: "submitted",
+            expiry: now.getTime() + 24 * 60 * 60 * 1000, // 24 hours from now
+          };
+          localStorage.setItem(
+            NOMINATION_LOCAL_STORAGE_PREFIX + encodedEmailKey,
+            JSON.stringify(item)
+          );
+        }
+
+        // Add an event listener to the form's submit event
+        nominationForm.addEventListener("submit", function (event) {
+          const nominatorEmail = nominatorEmailInput.value;
+          const encodedEmailKey = encodeEmailForLS(nominatorEmail);
+
+          // Check if this nominator has already submitted
+          if (hasUserSubmitted(encodedEmailKey)) {
+            event.preventDefault(); // STOP the form from submitting
+            statusMessage.style.display = "block";
+            statusMessage.style.color = "red"; // Set color for error
+            statusMessage.textContent =
+              "You have already submitted a nomination using this email address. Thank you!";
+            submitButton.disabled = false; // Re-enable button
+            return; // Exit the function
+          }
+
+          // If this is a new submission, proceed and mark user as submitted
+          markUserAsSubmitted(encodedEmailKey);
+
+          // Give immediate visual feedback before redirect
+          submitButton.disabled = true;
+          submitButton.textContent = "Submitting...";
+          statusMessage.style.display = "block";
+          statusMessage.style.color = "darkgreen"; // Set color for submitting status
+          statusMessage.textContent =
+            "Submitting your nomination... Please wait.";
+
+          // Since formsubmit.co is used with _next, the browser will redirect
+          // automatically after formsubmit.co processes the submission.
+        });
+
+        // Initial check on page load: If there's a stored email from a previous session
+        // and that email indicates a prior submission, hide the form.
+        const lastNominatorEmailRaw = localStorage.getItem(
+          "last_nominator_email_raw"
+        );
+        if (lastNominatorEmailRaw) {
+          const encodedKeyFromLastSession = encodeEmailForLS(
+            lastNominatorEmailRaw
+          );
+          if (hasUserSubmitted(encodedKeyFromLastSession)) {
+            statusMessage.style.display = "block";
+            statusMessage.style.color = "blue"; // Informational color
+            statusMessage.textContent =
+              "You have already submitted a nomination from this browser. Thank you!";
+            nominationForm.style.display = "none"; // Hide the form
+          }
+        }
+
+        // Listen for changes on the nominator email input field
+        // This allows re-showing the form if they clear the email or enter a new one
+        nominatorEmailInput.addEventListener("input", () => {
+          statusMessage.style.display = "none"; // Clear any status message
+          nominationForm.style.display = "block"; // Ensure form is visible again
+          submitButton.disabled = false;
+          submitButton.textContent = "Submit Nomination";
+        });
+
+        // Store the raw nominator email in localStorage on input blur, for persistent state
+        nominatorEmailInput.addEventListener("blur", () => {
+          const email = nominatorEmailInput.value.toLowerCase().trim();
+          if (email) {
+            localStorage.setItem("last_nominator_email_raw", email);
+          } else {
+            localStorage.removeItem("last_nominator_email_raw"); // Remove if field is empty
+          }
+        });
+      });
+    </script> -->
+    <footer>
+      <div class="footer-content">
+        <div class="social-media">
+          <h3>Follow JCIN UNIBEN</h3>
+          <a href="c" id="linkedin"
+            ><img src="images\social-linkedin-Photoroom.png" alt="Linkedin"
+          /></a>
+
+          <a href="https://www.facebook.com/Unibenjaycees" id="facebook"
+            ><img src="images\social-facebook-Photoroom.png" alt="Facebook"
+          /></a>
+          <a
+            href=" https://x.com/jci_uniben?t=PW5pwe7JdM_OeKftgZ5EzA&s=09
+          "
+            id="twitter"
+            ><img src="images\social-twitter-Photoroom.png" alt="Twitter"
+          /></a>
+          <a
+            href="https://www.tiktok.com/@jcinuniben?_t=ZM-8uil8rzDjOv&_r=1"
+            id="tiktok"
+            ><img src="images\social-tiktok-Photoroom.png" alt="TikTok"
+          /></a>
+        </div>
+        <div class="footer-logo">
+          <img
+            src="images/JCI - Nigeria UNIBEN - WHITE GOLD.png"
+            alt="JCIN UNIBEN Logo"
+          />
+        </div>
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="vote.html">Vote</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <p>&copy; <span class="year">2026</span> TOYP UNIBEN | Powered by JCIN UNIBEN</p>
+    </footer>
+
+    <script src="main.js"></script>
+    <script type="module" src="/scripts/nomination.js"></script>
+  </body>
+</html>

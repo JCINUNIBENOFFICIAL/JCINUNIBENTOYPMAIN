@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>TOYP UNIBEN - Past and Present Team</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link rel="stylesheet" href="/styles/directors.css" />
+  </head>
+  <body>
+    <header>
+      <a href="/" class="logo">
+        <img src="images/toyp.png" alt="TOYP UNIBEN Logo" />
+      </a>
+
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li class="dropdown">
+            <a href="">TOYP Directors</a>
+            <ul class="dropdown-menu">
+              <li><a href="">2023 TOYP</a></li>
+              <li><a href="/directors.html">2026 TOYP</a></li>
+            </ul>
+          </li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <a href="nomination.html" class="mobile-contact-btn"> Nominate </a>
+      </nav>
+
+      <a href="nomination.html" class="desktop-contact-btn btn"> Nominate </a>
+    </header>
+
+    <main>
+      <section class="hero-section">
+        <div class="box top-right-box"></div>
+        <div class="box bottom-left-box"></div>
+        <h1>Meet The TOYP Team.</h1>
+        <p class="intro-text">
+          The JCI UNIBEN TOYP Team are visionary leaders driving
+          excellence, service, and lasting impact. Through integrity and
+          innovation, they’ve shaped the organization and empowered members to
+          create meaningful change in the University of Benin community.
+        </p>
+        <div class="cta-btn-container">
+          <a class="btn btn-secondary left-btn" href="#directors-section-2026">
+            2026 TOYP Team
+          </a>
+          <button class="btn right-btn">2023 TOYP Team</button>
+        </div>
+      </section>
+      <br /><br />
+      <section id="directors-section-2026" class="container directors-section-2026">
+        <div class="top-right-box box"></div>
+        <div class="bottom-left-box box"></div>
+        <h2>TOYP 2026 TEAM</h2>
+        <div class="card-container">
+               <!-- injected with JS -->
+        </div>
+         
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="social-media">
+          <h3>Follow JCIN UNIBEN</h3>
+          <a href="c" id="linkedin"
+            ><img src="images\social-linkedin-Photoroom.png" alt="Linkedin"
+          /></a>
+
+          <a href="https://www.facebook.com/Unibenjaycees" id="facebook"
+            ><img src="images\social-facebook-Photoroom.png" alt="Facebook"
+          /></a>
+          <a
+            href=" https://x.com/jci_uniben?t=PW5pwe7JdM_OeKftgZ5EzA&s=09
+          "
+            id="twitter"
+            ><img src="images\social-twitter-Photoroom.png" alt="Twitter"
+          /></a>
+          <a
+            href="https://www.tiktok.com/@jcinuniben?_t=ZM-8uil8rzDjOv&_r=1"
+            id="tiktok"
+            ><img src="images\social-tiktok-Photoroom.png" alt="TikTok"
+          /></a>
+        </div>
+        <div class="footer-logo">
+          <img
+            src="images/JCI - Nigeria UNIBEN - WHITE GOLD.png"
+            alt="JCIN UNIBEN Logo"
+          />
+        </div>
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="nomination.html">Nominate</a></li>
+            <li><a href="vote.html">Judges</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <p>
+        &copy; <span class="year">2026</span> TOYP UNIBEN | Powered by JCIN
+        UNIBEN
+      </p>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="/scripts/directors.js"></script>
+  </body>
+</html>
