@@ -1,6 +1,43 @@
 @import url("/styles/styles.css");
 
 
+.hero-section {
+  background-color: rgb(247, 240, 220);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.hero-section .icon{
+ stroke-width: 3px;
+ color: var(--jci-yellow);
+ position: absolute;
+ z-index: 1;
+ animation: hover 3s linear infinite;
+}
+
+
+@keyframes hover {
+  0%{
+    transform: translateY(-5px);
+  }25%{
+    transform: translateY(-2.5px);
+  }50%{
+    transform: translateY(0px);
+  }75%{
+    transform: translateY(-2.5px);
+
+  }100%{
+  transform: translateY(-5px);
+
+  }
+}
+
+
+
 
 
 /* History Section */
@@ -91,12 +128,7 @@ section {
   padding: 2rem 5rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.hero-section {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url('images/heroImage.jpg');
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
-}
+
 .hero {
   display: flex;
   flex-direction: column;
@@ -110,17 +142,31 @@ section {
 .hero h1 {
   font-size: 4rem;
   line-height: 1;
-  color: white;
+  color: var(--jci-yellow);
   font-weight: bold;
   margin-bottom: 0.5rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: slideUp 1s ease-out forwards;
 }
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: .6;
+  }to {
+    transform: translateY(0px);
+    opacity: 1;
+
+  }
+}
+
+
 .hero p {
   color: white;
   margin-bottom: 3rem;
 }
 .blue {
-  color: #0097D6;
+  color: var(--jci-blue);
 }
 .hero button, .cta-section button {
   padding: 0.75rem 5rem;
@@ -133,15 +179,12 @@ section {
   transition: background-color 0.3s ease;
 }
 .about-section {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  align-items: centre;
-  background-color: #ffcc00;
+  background-color: var(--jci-yellow);
 }
 .about-section h2 {
   line-height: 1.4;
   font-size: 2rem;
+  text-align: center;
 }
 .impact-section {
   display: grid;
@@ -413,7 +456,7 @@ section {
   }
 
   .hero-section {
-    height: 80vh;
+    height: 100svh;
   }
 
   .hero h1 {

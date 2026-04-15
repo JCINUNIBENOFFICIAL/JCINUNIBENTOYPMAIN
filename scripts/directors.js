@@ -2,7 +2,7 @@ const directors2026 = [
   {
     id: 1,
     name: "Ejime Senorita",
-    role: "Publicity Team Lead",
+    role: "Assistant Publicity Team Lead",
     image: "/images/directors-2026/Ejime Senorita.jpeg",
     message:
       "As President, Daniel leads with integrity and vision, ensuring the continued growth and impact of JCI UNIBEN within the university and beyond.",
@@ -26,7 +26,7 @@ const directors2026 = [
   {
     id: 3,
     name: "GOODLUCK CHINENYE CHILAKA",
-    role: "Content writing and communication.",
+    role: "Community manager.",
     image: "/images/directors-2026/GOODLUCK CHINENYE CHILAKA.jpeg",
     message:
       "Michael coordinates impactful programs that empower young leaders to create sustainable change within the UNIBEN community.",
@@ -39,7 +39,7 @@ const directors2026 = [
   {
     id: 4,
     name: "Miracle Ididi",
-    role: "Community manager",
+    role: "Assistant Community manager",
     image: "/images/directors-2026/Miracle Ididi.jpeg",
     message:
       "Stephanie leads branding and communications, ensuring the JCI UNIBEN message is delivered with clarity, excellence, and innovation.",
@@ -51,7 +51,7 @@ const directors2026 = [
   {
     id: 5,
     name: "Orubu onoriode Godsfavour",
-    role: "Product management",
+    role: "Logistics Team Lead",
     image: "/images/directors-2026/Orubu onoriode Godsfavour.jpeg",
     message:
       "Victor manages financial planning and accountability, strengthening transparency and sustainability across all initiatives.",
@@ -76,7 +76,7 @@ const directors2026 = [
   {
     id: 6,
     name: "Warmate William",
-    role: "Presentation design",
+    role: "Publicity Team Lead",
     image: "/images/directors-2026/warmate-williams.jpeg",
     message:
       "Victor manages financial planning and accountability, strengthening transparency and sustainability across all initiatives.",
