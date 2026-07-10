@@ -7,10 +7,19 @@
       name="description"
       content="Nominate a young achiever at the University of Benin for the TOYP UNIBEN Award. Celebrate outstanding individuals making a difference."
     />
-    <title>Nominate - TOYP UNIBEN</title>
+
+  <title>TOYP UNIBEN - Nominate</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
 
 
-    <link rel="stylesheet" href="/styles/nomination.css" />
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link rel="stylesheet" href="styles/nomination.css" />
 
   </head>
   <body>
@@ -24,13 +33,11 @@
 
       <nav>
         <ul>
-          <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li class="dropdown">
-            <a href="">Past TOYP</a>
+            <a href="">TOYP Directors</a>
             <ul class="dropdown-menu">
-              <li><a href="">2023 TOYP</a></li>
-              <li><a href="">2025 TOYP</a></li>
+              <li><a href="/directors.html">2026 TOYP</a></li>
             </ul>
           </li>
           <li><a href="contact.html">Contact</a></li>
@@ -47,27 +54,16 @@
    
 
     <section class="nominate fade-in  ">
-      <h1>Nomination for TOYP UNIBEN Is Now Closed</h1>
+      <h1>Nominate a Young Achiever for TOYP UNIBEN</h1>
       <p>
-        Thank you for your enthusiasm and support. The nomination window for this
-        edition has officially closed, and we appreciate every nomination and
-        every effort made to celebrate young achievers at the University of Benin.
+        The TOYP UNIBEN awards recognizes exceptional young individuals at the
+        University of Benin. Nominate someone (Undergraduate) who exemplifies
+        leadership innovation or social impact for this prestigious recognition.
       </p>
 
       <div class="nomination-form">
-        <div class="nomination-closed-card">
-          <div class="closed-badge">Closed</div>
-          <h2>Nomination is Closed</h2>
-          <p>
-            Thank you for your interest in celebrating outstanding young achievers.
-            The nomination window for this edition has officially closed, and we
-            are grateful for every submission and show of support.
-          </p>
-          <div class="closed-actions">
-            <a href="index.html" class="btn closed-btn primary">Return Home</a>
-            <a href="contact.html" class="btn closed-btn secondary">Contact Us</a>
-          </div>
-        </div>
+        <h2>Nomination Form</h2>
+        <p>Please fill in the form below to nominate a candidate:</p>
 
         <!-- started working local host had to remove form action link to avoid uncessary submits -->
         <!-- https://formsubmit.co/toypuniben@gmail.com -->
@@ -77,8 +73,10 @@
 
    
 
-          <!-- <form action="" id="nomination-form" method="POST">
+           <form action="" id="nomination-form" method="POST">
+          <!-- <form id="nomination-form" method="POST"> -->
            
+            <!-- nomination form step 1 -->
           <div class="step nomination-form-step-1">
 
           <label for="nominee-name">Nominee Full Name:</label>
@@ -137,6 +135,7 @@
 
           </div>
            
+          <!-- nomination form step 2 -->
           <div class="step nomination-form-step-2">
           <label for="whatsapp-contact">WhatsApp Contact of Nominee:</label>
           <input
@@ -177,6 +176,9 @@
             <option value="Basic Medical science">Basic Medical science</option>
             <option value="School of Dentistry">School of Dentistry</option>
             <option value="Faculty of Education">Faculty of Education</option>
+             <option value="Faculty of Computing">Faculty of Computing</option>
+             <option value="Faculty of Nursing">Faculty of Nursing</option>
+             <option value="Faculty of SLT">Faculty of SLT</option>
             <option value="Faculty of Engineering">
               Faculty of Engineering
             </option>
@@ -218,6 +220,7 @@
               data-error-id="department-error"></span>
           </div>
            
+          <!-- nomination from step 3 -->
           <div class="step nomination-form-step-3">
           <label for="level">Level of Nominee:</label>
           <input 
@@ -236,36 +239,18 @@
               data-error-id="level-error"></span>
 
           <label for="category">Category:</label>
-          <select id="category" name="category"  data-error-id="category-error" required>
+          <select id="category" name="category" data-error-id="category-error" required>
             <option value="">Select Category</option>
-            <option value="Business and Entrepreneurship Excellence">
-             Business & Entrepreneurship Excellence-
-            </option>
-            <option value="Political & Governance Impact">
-              Leadership in Politics & Student Governance-
-            </option>
-            <option value="Academic and Intellectual Achievements">
-              Academic and Intellectual Achievement
-            </option>
-            <option value="Art & Creative Innovation">
-              Art, Culture & Creative Expression
-            </option>
-            <option value="Sports Achievement">Sports & Athletic Excellence</option>
-            <option value="Voluntary Leadership and Humanitarian services">
-              Volunteering & Humanitarian Service
-            </option>
-            <option value="Personal Development and Self improvement">
-              Health & Wellness Advocacy
-            </option>
-            <option value="Health & Medical Impact">
-             Digital Media & Influencer Impact
-            </option>
-            <option value="Social & Community Influence">
-              Tech & Innovation Leadership
-            </option>
-            <option value="Digital Media Presence">
-              Personal development and Self improvement
-            </option>
+            <option value="Business and Entrepreneurial Excellence">Business and Entrepreneurial Excellence</option>
+            <option value="Leadership in Student Governance">Leadership in Student Governance</option>
+            <option value="Academic and Intellectual Achievement">Academic and Intellectual Achievement</option>
+            <option value="Art, Culture and Creative Expression">Art, Culture and Creative Expression</option>
+            <option value="Sports and Athletic Excellence">Sports and Athletic Excellence</option>
+            <option value="Volunteering and Human Service">Volunteering and Human Service</option>
+            <option value="Health, Wellness and Advocacy">Health, Wellness and Advocacy</option>
+            <option value="Digital Media and Influencer Impact">Digital Media and Influencer Impact</option>
+            <option value="Tech and Innovative Leadership">Tech and Innovative Leadership</option>
+            <option value="Personal Development and Self Improvement">Personal Development and Self Improvement</option>
           </select>
             <span 
               id="category-error"
@@ -295,10 +280,16 @@
               class="error-message" 
               data-error-id="reason-error"></span>
 
-         
+          <!-- <input
+            type="hidden"
+            name="_next"
+            value="https://jcin-uniben-toyp-25.vercel.app/thankuu.html"
+          />
+          <input type="hidden" name="_captcha" value="false" /> -->
 
           </div>
 
+          <!-- nomination form navigation btn container-->
           <div class="nomination-form-navigation-container">
             <button type="button" id="back-btn">Back</button>
             <button 
@@ -309,10 +300,10 @@
             </button>
           </div>
 
-          </form> -->
+          </form>
     
 
-        <!-- <div
+        <div
           id="confirmation-message"
           style="
             display: none;
@@ -321,146 +312,11 @@
             margin-top: 20px;
           "
         >
-          <h3>Thank you for your nomination!</h3>
-          <p>
-            Your submission has been successfully received. The nominee will be
-            contacted soon.
-          </p> -->
+          <!-- messages written by JS -->
         </div>
       </div>
     </section>
-    <!-- <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const nominationForm = document.getElementById("nomination-form-main");
-        const submitButton = document.getElementById("submit-button");
-        const statusMessage = document.getElementById("status-message");
-        const nominatorEmailInput = document.getElementById("nominator-email");
-
-        // Define a unique key prefix for local storage specific to this form/purpose
-        const NOMINATION_LOCAL_STORAGE_PREFIX =
-          "toyp_uniben_nomination_status_";
-
-        // Function to encode email for localStorage key (basic, not for security)
-        function encodeEmailForLS(email) {
-          return btoa(encodeURIComponent(email.toLowerCase().trim()));
-        }
-
-        // Function to check if a user with this email has already submitted
-        function hasUserSubmitted(encodedEmailKey) {
-          const itemStr = localStorage.getItem(
-            NOMINATION_LOCAL_STORAGE_PREFIX + encodedEmailKey
-          );
-          if (!itemStr) return false;
-
-          try {
-            const item = JSON.parse(itemStr);
-            const now = new Date().getTime();
-            // Check if item exists and is not expired
-            if (
-              item.value === "submitted" &&
-              item.expiry &&
-              item.expiry > now
-            ) {
-              return true;
-            } else {
-              // Remove expired item
-              localStorage.removeItem(
-                NOMINATION_LOCAL_STORAGE_PREFIX + encodedEmailKey
-              );
-              return false;
-            }
-          } catch (e) {
-            // Handle potential parsing errors if item is not valid JSON
-            localStorage.removeItem(
-              NOMINATION_LOCAL_STORAGE_PREFIX + encodedEmailKey
-            );
-            return false;
-          }
-        }
-
-        // Function to mark a user as having submitted
-        function markUserAsSubmitted(encodedEmailKey) {
-          // Set for 24 hours (86400000 milliseconds) as an example expiry
-          const now = new Date();
-          const item = {
-            value: "submitted",
-            expiry: now.getTime() + 24 * 60 * 60 * 1000, // 24 hours from now
-          };
-          localStorage.setItem(
-            NOMINATION_LOCAL_STORAGE_PREFIX + encodedEmailKey,
-            JSON.stringify(item)
-          );
-        }
-
-        // Add an event listener to the form's submit event
-        nominationForm.addEventListener("submit", function (event) {
-          const nominatorEmail = nominatorEmailInput.value;
-          const encodedEmailKey = encodeEmailForLS(nominatorEmail);
-
-          // Check if this nominator has already submitted
-          if (hasUserSubmitted(encodedEmailKey)) {
-            event.preventDefault(); // STOP the form from submitting
-            statusMessage.style.display = "block";
-            statusMessage.style.color = "red"; // Set color for error
-            statusMessage.textContent =
-              "You have already submitted a nomination using this email address. Thank you!";
-            submitButton.disabled = false; // Re-enable button
-            return; // Exit the function
-          }
-
-          // If this is a new submission, proceed and mark user as submitted
-          markUserAsSubmitted(encodedEmailKey);
-
-          // Give immediate visual feedback before redirect
-          submitButton.disabled = true;
-          submitButton.textContent = "Submitting...";
-          statusMessage.style.display = "block";
-          statusMessage.style.color = "darkgreen"; // Set color for submitting status
-          statusMessage.textContent =
-            "Submitting your nomination... Please wait.";
-
-          // Since formsubmit.co is used with _next, the browser will redirect
-          // automatically after formsubmit.co processes the submission.
-        });
-
-        // Initial check on page load: If there's a stored email from a previous session
-        // and that email indicates a prior submission, hide the form.
-        const lastNominatorEmailRaw = localStorage.getItem(
-          "last_nominator_email_raw"
-        );
-        if (lastNominatorEmailRaw) {
-          const encodedKeyFromLastSession = encodeEmailForLS(
-            lastNominatorEmailRaw
-          );
-          if (hasUserSubmitted(encodedKeyFromLastSession)) {
-            statusMessage.style.display = "block";
-            statusMessage.style.color = "blue"; // Informational color
-            statusMessage.textContent =
-              "You have already submitted a nomination from this browser. Thank you!";
-            nominationForm.style.display = "none"; // Hide the form
-          }
-        }
-
-        // Listen for changes on the nominator email input field
-        // This allows re-showing the form if they clear the email or enter a new one
-        nominatorEmailInput.addEventListener("input", () => {
-          statusMessage.style.display = "none"; // Clear any status message
-          nominationForm.style.display = "block"; // Ensure form is visible again
-          submitButton.disabled = false;
-          submitButton.textContent = "Submit Nomination";
-        });
-
-        // Store the raw nominator email in localStorage on input blur, for persistent state
-        nominatorEmailInput.addEventListener("blur", () => {
-          const email = nominatorEmailInput.value.toLowerCase().trim();
-          if (email) {
-            localStorage.setItem("last_nominator_email_raw", email);
-          } else {
-            localStorage.removeItem("last_nominator_email_raw"); // Remove if field is empty
-          }
-        });
-      });
-    </script> -->
+    
     <footer>
       <div class="footer-content">
         <div class="social-media">
@@ -500,10 +356,25 @@
           </ul>
         </div>
       </div>
-      <p>&copy; 2025 TOYP UNIBEN | Powered by JCIN UNIBEN</p>
+      <p>&copy; <span class="year">2025</span> TOYP UNIBEN | Powered by JCIN UNIBEN</p>
     </footer>
 
     <script src="main.js"></script>
-    <script type="module" src="/scripts/nomination.js"></script>
+    <!-- Ensure the frontend knows where the API lives during local testing. -->
+    <script>
+      // Change this to your deployed API url when you deploy the backend.
+      // Do NOT put any database SERVICE ROLE keys here. Only set the public anon key
+      // if you intentionally want the browser to write directly to Supabase.
+      // window.__API_BASE__ = window.__API_BASE__ || 'http://localhost:3000';
+      // Optional: enable direct client-to-Supabase writes by setting these values.
+      // You MUST set `window.__SUPABASE_ANON_KEY__` (the public anon key) in your
+      // local environment before enabling direct writes. Example (do this locally only):
+      // window.__SUPABASE_ANON_KEY__ = 'your-anon-key-here';
+      window.__SUPABASE_URL__ = window.__SUPABASE_URL__ || 'https://xbrndlhzaluksjhdbnur.supabase.co';
+      // Publishable (anon) key inserted below. This is safe for browser use
+      // but DO NOT expose service role keys in frontend code.
+      window.__SUPABASE_ANON_KEY__ = window.__SUPABASE_ANON_KEY__ || 'sb_publishable_0kunmksX8TRkAMaVZeEcRg_BVe2B9Yv';
+    </script>
+    <script type="module" src="scripts/nomination.js"></script>
   </body>
 </html>

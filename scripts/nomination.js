@@ -3,7 +3,6 @@ import { showCurrentStep } from "./utils/utils.js";
 // as page loads get these dom element and save in thier respective variables
 // for cacheing reasons
 const nominationForm = document.getElementById("nomination-form");
-
 const nominationFormStep1HTML = document.querySelector(
   ".nomination-form-step-1",
 );
@@ -17,6 +16,71 @@ const nominationFormStep3HTML = document.querySelector(
 // El stands for element , btn for button
 const nextBtnEl = document.getElementById("next-btn");
 const backBtnEl = document.getElementById("back-btn");
+
+if (!nominationForm || !nextBtnEl || !backBtnEl) {
+  console.info("Nomination form is currently closed. Form script disabled.");
+} else {
+  initNominationForm();
+}
+
+function initNominationForm() {
+  let count = 0; // keeps track of current step, I display nomination step based on this
+
+  const nominationFormStepsList = [
+    nominationFormStep1HTML,
+    nominationFormStep2HTML,
+    nominationFormStep3HTML,
+  ];
+
+  let totalNumberOfSteps = nominationFormStepsList.length - 1; //0, 1, 2 so it always return something in the array
+
+  function showHideFormNavButtons() {
+    count === 0 ? (backBtnEl.style.opacity = "0") : (backBtnEl.style.opacity = "1");
+    count === totalNumberOfSteps ? (nextBtnEl.innerHTML = "Submit") : (nextBtnEl.innerHTML = "Next");
+  }
+
+  showHideFormNavButtons();
+
+  async function moveToNextStep() {
+    if (count < 0) {
+      count = 0;
+    } else if (count >= totalNumberOfSteps) {
+      count = totalNumberOfSteps;
+      let success = validateStep3Form();
+      if (success) {
+        await submitNominationForm();
+      }
+    } else {
+      if (count === 0) {
+        let success = validateStep1Form();
+        success ? count++ : (count = 0);
+      } else if (count === 1) {
+        let success = validateStep2Form();
+        success ? count++ : (count = 1);
+      }
+    }
+    showHideFormNavButtons();
+    showCurrentStep(nominationFormStepsList, count);
+  }
+
+  function moveToPrevStep() {
+    if (count <= 0) {
+      count = 0;
+    } else if (count > totalNumberOfSteps) {
+      count = totalNumberOfSteps;
+    } else {
+      count--;
+    }
+    showHideFormNavButtons();
+    showCurrentStep(nominationFormStepsList, count);
+  }
+
+  nextBtnEl.addEventListener("click", moveToNextStep);
+  backBtnEl.addEventListener("click", moveToPrevStep);
+
+  // Rest of form validation and submission code remains unchanged
+  // The functions below are already declared in the file and accessible in this scope.
+}
 
 let count = 0; //keeps track of current step, I display nomination step based on this
 

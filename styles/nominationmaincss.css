@@ -26,112 +26,110 @@
   color: #555;
 }
 
-.nomination-form {
+.nomination-status-card {
   display: flex;
-  justify-content: center;
-  margin-top: 1.5rem;
-}
-
-.nomination-closed-card {
-  width: min(100%, 640px);
-  padding: 2.2rem;
-  border-radius: 24px;
-  background: linear-gradient(135deg, #0b3d6d 0%, #0057b8 45%, #2f8fd8 100%);
-  color: #fff;
-  text-align: center;
-  box-shadow: 0 24px 50px rgba(0, 43, 85, 0.24);
-  position: relative;
-  overflow: hidden;
-}
-
-.nomination-closed-card::before {
-  content: "";
-  position: absolute;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  top: -70px;
-  right: -50px;
-}
-
-.nomination-closed-card::after {
-  content: "";
-  position: absolute;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  bottom: -60px;
-  left: -30px;
-}
-
-.closed-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-}
-
-.nomination-closed-card h2 {
-  font-size: 1.8rem;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(0, 43, 85, 0.95), rgba(0, 120, 195, 0.95));
   color: #ffffff;
-  margin-bottom: 0.8rem;
-  position: relative;
-  z-index: 1;
+  padding: 2.4rem;
+  border-radius: 28px;
+  box-shadow: 0 28px 70px rgba(0, 43, 85, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.nomination-closed-card p {
-  margin-bottom: 1.5rem;
-  color: rgba(255, 255, 255, 0.92);
+.status-pill {
+  display: inline-flex;
+  padding: 0.75rem 1.15rem;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nomination-status-card h1 {
+  font-size: 2.5rem;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.nomination-status-card p {
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 760px;
+}
+
+.nomination-highlights {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.highlight {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  padding: 1.35rem;
+}
+
+.highlight h2 {
+  margin: 0 0 0.65rem;
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+.highlight p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.7;
-  position: relative;
-  z-index: 1;
 }
 
-.closed-actions {
+.nomination-cta-card {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
   gap: 1rem;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1;
+  margin-top: 2rem;
+  text-align: center;
 }
 
-.closed-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.85rem 1.2rem;
-  border-radius: 999px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.closed-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
-}
-
-.closed-btn.primary {
+.btn.secondary-btn {
   background: #ffffff;
   color: #002b55;
+  border: none;
+  padding: 1rem 1.8rem;
+  border-radius: 999px;
+  box-shadow: 0 16px 36px rgba(0, 43, 85, 0.16);
 }
 
-.closed-btn.secondary {
-  background: rgba(255, 255, 255, 0.16);
+.btn.outline-btn {
+  background: transparent;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  padding: 1rem 1.8rem;
+  border-radius: 999px;
 }
+
+.btn.secondary-btn:hover,
+.btn.outline-btn:hover {
+  transform: translateY(-2px);
+}
+
+.nomination-forms h2 {
+  font-size: 1.5rem;
+  color: #002b55;
+  margin-bottom: 0.5rem;
+}
+
+.nomination-forms p {
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+
 
 form > .step{
   display: flex;
