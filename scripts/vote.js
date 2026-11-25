@@ -42,7 +42,7 @@ function renderStandings() {
     const nominees = [...category.nominees]
       .filter(n => String(n.nominee_name || n.name || '').toLowerCase().includes(query) ||
                    category.name.toLowerCase().includes(query))
-      .sort((a, b) => Number(b.vote_count || b.votes || 0) - Number(a.vote_count || b.votes || 0) ||
+      .sort((a, b) => Number(b.vote_count ?? b.votes ?? 0) - Number(a.vote_count ?? a.votes ?? 0) ||
                       String(a.nominee_name || a.name || '').localeCompare(String(b.nominee_name || b.name || '')));
     if (!nominees.length) return;
     shown += nominees.length;
