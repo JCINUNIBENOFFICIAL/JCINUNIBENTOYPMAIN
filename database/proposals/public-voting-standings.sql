@@ -1,26 +1,29 @@
--- PROPOSAL ONLY — do not apply to production without separate approval.
--- Public endpoint for the live TOYP standings page.
--- It returns nominee names, categories, and aggregate vote counts only.
--- It never returns voter IDs, emails, IP addresses, or ballot-level records.
+-- Public aggregate voting standings endpoint.
+-- Deployed to Supabase project xbrndlhzaluksjhdbnur through migration
+-- create_public_voting_standings_rpc.
 --
--- Eligible nominees are verified and explicitly marked ready_for_voting.
--- This function uses a fixed search_path and static SQL only.
+-- This endpoint returns nominee names, categories, aggregate vote counts,
+-- total votes for eligible nominees, and the voting_open flag only.
+-- It never returns voter IDs, emails, IP addresses, user agents, or ballots.
+--
+-- SECURITY DEFINER is required because the source tables have RLS enabled
+-- and public visitors must not receive direct table access. The function:
+--   * has no caller-controlled parameters or dynamic SQL;
+--   * uses an empty, fixed search_path and fully-qualified table names;
+--   * returns only aggregates for nominees explicitly marked ready_for_voting;
+--   * has EXECUTE revoked from PUBLIC and granted only to anon/authenticated.
 
 CREATE OR REPLACE FUNCTION public.get_public_voting_standings()
 RETURNS jsonb
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
-SET search_path = pg_catalog, public
+SET search_path = ''
 AS $function$
     WITH eligible_nominees AS (
-        SELECT
-            n.id,
-            n.nominee_name,
-            n.category
+        SELECT n.id, n.nominee_name, n.category
         FROM public.nominations AS n
-        WHERE n.status = 'verified'
-          AND n.ready_for_voting IS TRUE
+        WHERE n.ready_for_voting IS TRUE
     ),
     nominee_totals AS (
         SELECT
@@ -34,7 +37,7 @@ AS $function$
          AND v.category = e.category
         GROUP BY e.id, e.nominee_name, e.category
     )
-    SELECT jsonb_build_object(
+    SELECT pg_catalog.jsonb_build_object(
         'voting_open',
         COALESCE((
             SELECT s.value = 'true'
@@ -43,12 +46,11 @@ AS $function$
             LIMIT 1
         ), false),
         'total_votes',
-        COALESCE((SELECT SUM(nt.vote_count) FROM nominee_totals AS nt), 0),
+        COALESCE((SELECT pg_catalog.sum(nt.vote_count) FROM nominee_totals AS nt), 0),
         'nominees',
         COALESCE((
-            SELECT jsonb_agg(
-                jsonb_build_object(
-                    'nominee_id', nt.nominee_id,
+            SELECT pg_catalog.jsonb_agg(
+                pg_catalog.jsonb_build_object(
                     'nominee_name', nt.nominee_name,
                     'category', nt.category,
                     'vote_count', nt.vote_count
@@ -60,15 +62,7 @@ AS $function$
     );
 $function$;
 
--- Public visitors need only EXECUTE permission on this aggregate-only function.
 REVOKE ALL ON FUNCTION public.get_public_voting_standings() FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.get_public_voting_standings() FROM anon;
 REVOKE ALL ON FUNCTION public.get_public_voting_standings() FROM authenticated;
 GRANT EXECUTE ON FUNCTION public.get_public_voting_standings() TO anon, authenticated;
-
--- Verification after a separately approved deployment:
--- 1. Anonymous call returns only voting_open, total_votes, and nominees.
--- 2. Confirm no voter identifiers or ballot records are present in the payload.
--- 3. Confirm only verified, ready_for_voting nominees are returned.
--- 4. Confirm nominees with zero votes remain visible with vote_count = 0.
--- 5. Compare total_votes with the sum of nominee vote_count values.
