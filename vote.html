@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Follow live voting counts and nominee rankings for the JCIN UNIBEN Ten Outstanding Young Persons Awards.">
+  <title>Live Voting | TOYP UNIBEN</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Mulish:wght@200..1000&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/vote.css">
+</head>
+<body>
+  <header>
+    <a href="/" class="logo"><img src="images/toyp.png" alt="TOYP UNIBEN Logo"></a>
+    <button class="menu-toggle" type="button" onclick="toggleMenu()" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+    <nav id="primary-navigation">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="directors.html">TOYP Directors</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <a href="nomination.html" class="mobile-contact-btn">Nominate</a>
+    </nav>
+    <a href="nomination.html" class="desktop-contact-btn btn">Nominate</a>
+  </header>
+
+  <main class="voting-page">
+    <section class="voting-hero">
+      <p class="eyebrow">TOYP UNIBEN 2026</p>
+      <h1>Live Voting Standings</h1>
+      <p>Follow nominee vote counts and category rankings as votes are received.</p>
+      <div class="voting-status-row">
+        <span id="voting-status" class="live-status" role="status">Checking voting status…</span>
+        <span id="last-updated">Standings update automatically</span>
+      </div>
+    </section>
+
+    <section class="voting-summary" aria-label="Voting summary">
+      <article class="summary-card"><span>Eligible nominees</span><strong id="nominee-total">—</strong></article>
+      <article class="summary-card"><span>Categories</span><strong id="category-total">—</strong></article>
+      <article class="summary-card"><span>Total votes</span><strong id="vote-total">—</strong></article>
+    </section>
+
+    <section class="standings-section">
+      <div class="standings-heading">
+        <div>
+          <h2>Nominee Rankings</h2>
+          <p>Rankings are provisional while voting remains open and are not certified award results.</p>
+        </div>
+        <label class="search-label" for="nominee-search">Find a nominee
+          <input id="nominee-search" type="search" placeholder="Search name or category" autocomplete="off">
+        </label>
+      </div>
+      <div id="standings-message" class="standings-message" role="status">Loading live standings…</div>
+      <div id="category-standings" class="category-standings" aria-live="polite"></div>
+    </section>
+
+    <p class="privacy-note">Only aggregate vote totals are displayed. Individual voter identities and ballot records are private.</p>
+  </main>
+
+  <footer>
+    <p>&copy; <span class="year">2026</span> TOYP UNIBEN | Powered by JCIN UNIBEN</p>
+  </footer>
+  <script src="main.js"></script>
+  <script type="module" src="scripts/vote.js"></script>
+</body>
+</html>
