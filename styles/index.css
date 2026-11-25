@@ -318,3 +318,71 @@
   }
 
 }
+
+/* Mobile layout guardrails for the homepage */
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 6rem;
+    min-height: auto;
+  }
+
+  .hero > .container {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero .content-container {
+    padding: 1.25rem .75rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+    overflow-wrap: anywhere;
+  }
+
+  .hero p {
+    max-width: 42rem;
+  }
+
+  .slider-container {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .slider-container figure {
+    width: min(72vw, 250px);
+    height: clamp(260px, 90vw, 390px);
+  }
+
+  .gallery-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .director-message,
+  .president-message,
+  .toypdirector-message {
+    width: 100%;
+    min-width: 0;
+    gap: 1.25rem;
+  }
+
+  .director-message .message-left,
+  .director-message .message-right {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .director-message p {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 380px) {
+  .gallery-container {
+    grid-template-columns: 1fr;
+  }
+
+  .slider-container figure {
+    height: 260px;
+  }
+}
