@@ -3,7 +3,7 @@ const directors2026 = [
     id: 1,
     name: "Ejime Senorita",
     role: "Assistant Publicity Team Lead",
-    image: "/images/directors-2026/Ejime Senorita.jpeg",
+    image: "images/directors-2026/Ejime Senorita.jpeg",
     message:
       "As President, Daniel leads with integrity and vision, ensuring the continued growth and impact of JCI UNIBEN within the university and beyond.",
     socialLinks: {
@@ -15,7 +15,7 @@ const directors2026 = [
     id: 2,
     name: " Emmanuel Success Osaretemen ",
     role: "Nomination and Screening Team Lead",
-    image: "/images/directors-2026/Emmanuel Success.jpeg",
+    image: "images/directors-2026/Emmanuel Success.jpeg",
     message:
       "Precious oversees strategic initiatives and membership engagement, fostering collaboration and excellence across all committees.",
     socialLinks: {
@@ -27,7 +27,7 @@ const directors2026 = [
     id: 3,
     name: "GOODLUCK CHINENYE CHILAKA",
     role: "Community manager.",
-    image: "/images/directors-2026/GOODLUCK CHINENYE CHILAKA.jpeg",
+    image: "images/directors-2026/GOODLUCK CHINENYE CHILAKA.jpeg",
     message:
       "Michael coordinates impactful programs that empower young leaders to create sustainable change within the UNIBEN community.",
     socialLinks: {
@@ -40,7 +40,7 @@ const directors2026 = [
     id: 4,
     name: "Miracle Ididi",
     role: "Assistant Community manager",
-    image: "/images/directors-2026/Miracle Ididi.jpeg",
+    image: "images/directors-2026/Miracle Ididi.jpeg",
     message:
       "Stephanie leads branding and communications, ensuring the JCI UNIBEN message is delivered with clarity, excellence, and innovation.",
     socialLinks: {
@@ -52,7 +52,7 @@ const directors2026 = [
     id: 5,
     name: "Orubu onoriode Godsfavour",
     role: "Logistics Team Lead",
-    image: "/images/directors-2026/Orubu onoriode Godsfavour.jpeg",
+    image: "images/directors-2026/Orubu onoriode Godsfavour.jpeg",
     message:
       "Victor manages financial planning and accountability, strengthening transparency and sustainability across all initiatives.",
     socialLinks: {
@@ -64,7 +64,7 @@ const directors2026 = [
     id: 6,
     name: "Osarenkhoe Desmond",
     role: "Sponsorship and Partnership team lead",
-    image: "/images/directors-2026/Osarenkhoe Desmond.jpeg",
+    image: "images/directors-2026/Osarenkhoe Desmond.jpeg",
     message:
       "Victor manages financial planning and accountability, strengthening transparency and sustainability across all initiatives.",
     socialLinks: {
@@ -77,7 +77,7 @@ const directors2026 = [
     id: 6,
     name: "Warmate William",
     role: "Publicity Team Lead",
-    image: "/images/directors-2026/warmate-williams.jpeg",
+    image: "images/directors-2026/warmate-williams.jpeg",
     message:
       "Victor manages financial planning and accountability, strengthening transparency and sustainability across all initiatives.",
     socialLinks: {
