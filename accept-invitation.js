@@ -304,9 +304,8 @@ acceptForm?.addEventListener('submit', async (e) => {
             }, 3000);
             return;
         } else if (data?.existingUser) {
-            // The edge function detected an existing user
-            alert('An account already exists for this email. Please log in.');
-            window.location.href = '/profile.html';
+            // Keep the nominee on the invitation page and offer both login and recovery.
+            showRegistered(invitationData);
             return;
         } else {
             throw new Error(data?.error || 'Account creation failed.');
@@ -319,10 +318,9 @@ acceptForm?.addEventListener('submit', async (e) => {
         
         // Handle specific error cases
         if (errorMsg.includes('already registered') || errorMsg.includes('already exists')) {
-            errorMsg = 'This email is already registered. Please log in instead.';
-            setTimeout(() => {
-                window.location.href = '/profile.html';
-            }, 2000);
+            errorMsg = 'An account already exists for this email. Please log in or reset your password.';
+            showRegistered(invitationData);
+            return;
         } else if (errorMsg.includes('expired')) {
             errorMsg = 'This invitation has expired. Please request a new one.';
             showExpired(invitationData);
