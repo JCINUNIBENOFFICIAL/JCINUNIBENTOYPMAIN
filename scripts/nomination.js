@@ -600,3 +600,52 @@ const validateEmailInput = (inputELValue) => {
 
 
 
+
+
+
+async function initializeNominationWindow() {
+  const form = document.getElementById('nomination-form');
+  const status = document.getElementById('nomination-window-status');
+  if (!form || !status) return;
+
+  const showClosed = (message) => {
+    form.style.display = 'none';
+    status.style.display = 'block';
+    status.style.background = '#fef2f2';
+    status.style.color = '#991b1b';
+    status.textContent = message;
+  };
+
+  form.style.display = 'none';
+  status.textContent = 'Checking whether nominations are open…';
+
+  try {
+    if (!window.__SUPABASE_URL__ || !window.__SUPABASE_ANON_KEY__) {
+      throw new Error('Public Supabase configuration is unavailable.');
+    }
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    const client = createClient(window.__SUPABASE_URL__, window.__SUPABASE_ANON_KEY__);
+    const { data, error } = await client
+      .from('settings')
+      .select('value')
+      .eq('key', 'nominations_open')
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data || data.value !== 'true') {
+      showClosed('Nomination submissions are currently closed. Please check back later.');
+      return;
+    }
+
+    status.style.background = '#ecfdf5';
+    status.style.color = '#166534';
+    status.textContent = 'Nominations are currently open. You may complete and submit the form below.';
+    form.style.display = '';
+  } catch (error) {
+    console.error('Could not verify nomination window status:', error);
+    showClosed('We cannot verify whether nominations are open right now. Please try again later.');
+  }
+}
+
+initializeNominationWindow();
+
