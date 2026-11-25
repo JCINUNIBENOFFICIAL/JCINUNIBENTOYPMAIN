@@ -54,12 +54,20 @@ function renderStandings() {
     heading.textContent = category.name;
     card.append(heading);
 
+    let previousVoteCount = null;
+    let displayedRank = 0;
     nominees.forEach((nominee, index) => {
+      const currentVoteCount = Number(nominee.vote_count ?? nominee.votes ?? 0);
+      if (previousVoteCount === null || currentVoteCount !== previousVoteCount) {
+        displayedRank = index + 1;
+      }
+      previousVoteCount = currentVoteCount;
+
       const row = document.createElement('div');
       row.className = 'nominee-row';
       const rank = document.createElement('span');
       rank.className = 'nominee-rank';
-      rank.textContent = '#' + (index + 1);
+      rank.textContent = '#' + displayedRank;
       const name = document.createElement('span');
       name.className = 'nominee-name';
       name.textContent = String(nominee.nominee_name || nominee.name || 'Nominee');
