@@ -10,6 +10,7 @@ const messageEl = document.getElementById('standings-message');
 const listEl = document.getElementById('category-standings');
 const searchEl = document.getElementById('nominee-search');
 let latestCategories = [];
+let requestInFlight = false;
 
 const number = value => Number(value || 0).toLocaleString();
 const setText = (id, value) => {
@@ -77,6 +78,8 @@ function renderStandings() {
 }
 
 async function loadStandings() {
+  if (requestInFlight) return;
+  requestInFlight = true;
   statusEl.textContent = 'Updating live standings…';
   try {
     const { data, error } = await supabase.rpc('get_public_voting_standings');
@@ -102,7 +105,15 @@ async function loadStandings() {
     messageEl.textContent = 'We cannot retrieve verified live standings right now. Please check again shortly.';
     setText('nominee-total', '—');
     setText('category-total', '—');
-    setText('vote-total', '—');
+    if (!latestCategories.length) {
+      setText('nominee-total', '—');
+      setText('category-total', '—');
+      setText('vote-total', '—');
+    } else {
+      setText('last-updated', 'Showing the last successful update');
+    }
+  } finally {
+    requestInFlight = false;
   }
 }
 
