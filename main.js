@@ -32,17 +32,15 @@ document.addEventListener("DOMContentLoaded", function () {
     link.setAttribute("aria-haspopup", "true");
     link.setAttribute("aria-expanded", "false");
     link.addEventListener("click", function (event) {
-      if (window.matchMedia("(max-width: 768px)").matches) {
-        event.preventDefault();
-        const opening = !dropdown.classList.contains("active");
-        dropdowns.forEach((other) => {
-          other.classList.remove("active");
-          const otherLink = other.querySelector(":scope > a");
-          if (otherLink) otherLink.setAttribute("aria-expanded", "false");
-        });
-        dropdown.classList.toggle("active", opening);
-        link.setAttribute("aria-expanded", String(opening));
-      }
+      event.preventDefault();
+      const opening = !dropdown.classList.contains("active");
+      dropdowns.forEach((other) => {
+        other.classList.remove("active");
+        const otherLink = other.querySelector(":scope > a");
+        if (otherLink) otherLink.setAttribute("aria-expanded", "false");
+      });
+      dropdown.classList.toggle("active", opening);
+      link.setAttribute("aria-expanded", String(opening));
     });
   });
 
