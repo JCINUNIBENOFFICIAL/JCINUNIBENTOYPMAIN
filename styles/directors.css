@@ -302,3 +302,45 @@ main .intro-text{
 
 
 }
+/* Replace desktop sticky-card choreography with a readable mobile stack */
+@media (max-width: 700px) {
+  .card-container {
+    min-height: 0;
+    padding: 2rem .85rem;
+    perspective: none;
+    gap: 1.25rem;
+  }
+  .director-card-2026,
+  .card-container .director-card-2026 {
+    position: relative;
+    position: static;
+    top: auto !important;
+    width: min(100%, 380px);
+    max-width: 100%;
+    height: 390px;
+    margin: 0 auto;
+    transform: none !important;
+    backface-visibility: visible;
+  }
+  .dropped-left, .dropped-right, .top-card {
+    transform: none !important;
+  }
+  .director-card-2026 .social-media-container a {
+    width: 44px;
+    height: 44px;
+  }
+  .hero-section {
+    min-height: 65svh;
+    padding: 6rem 1rem 2rem;
+  }
+  .hero-section .cta-btn-container {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-section .cta-btn-container a,
+  .hero-section .cta-btn-container button {
+    width: 100%;
+    min-height: 46px;
+  }
+}
