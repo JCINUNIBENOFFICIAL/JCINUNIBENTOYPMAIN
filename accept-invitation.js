@@ -300,7 +300,7 @@ acceptForm?.addEventListener('submit', async (e) => {
             showSuccess('Account created successfully! Please check your email to verify your account.');
             // Redirect after 3 seconds
             setTimeout(() => {
-                window.location.href = '/profile.html?welcome=true';
+                window.location.href = 'profile.html?welcome=true';
             }, 3000);
             return;
         } else if (data?.existingUser) {
