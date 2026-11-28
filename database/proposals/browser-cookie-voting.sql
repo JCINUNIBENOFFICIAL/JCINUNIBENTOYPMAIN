@@ -1,27 +1,110 @@
--- Proposal only. Do not run against production until reviewed and approved.
--- Browser-cookie voting uses a random opaque token. Only its SHA-256 hash is stored.
--- Existing authenticated voter UUIDs remain valid; the votes.voter_id FK is removed
--- because new browser session UUIDs are not auth.users records. Existing votes remain.
+-- Proposal only. Do not apply until reviewed and explicitly approved.
+-- Browser-cookie voting: only a SHA-256 token hash is stored; raw tokens remain in
+-- Secure, HttpOnly, SameSite=Lax cookies. This does not prove one human = one vote.
 
 create table if not exists public.browser_voter_sessions (
     id uuid primary key default gen_random_uuid(),
-    token_hash text not null unique,
+    token_hash text not null unique
+        check (token_hash ~ '^[0-9a-f]{64}$'),
     created_at timestamptz not null default now(),
     expires_at timestamptz not null,
-    revoked_at timestamptz
+    revoked_at timestamptz,
+    constraint browser_voter_sessions_expiry_check check (expires_at > created_at)
 );
+
+create index if not exists idx_browser_voter_sessions_active_expiry
+    on public.browser_voter_sessions (expires_at)
+    where revoked_at is null;
 
 alter table public.browser_voter_sessions enable row level security;
 revoke all on public.browser_voter_sessions from public, anon, authenticated;
+grant select, insert, update on public.browser_voter_sessions to service_role;
 
--- Server-side Vercel API only, using SUPABASE_SERVICE_ROLE_KEY.
--- service_role bypasses RLS; do not grant this table to public browser clients.
+-- Browser session UUIDs are not auth.users IDs. Removing this FK does not delete
+-- existing vote rows. The existing (voter_id, category) unique constraint remains.
 alter table public.votes
     drop constraint if exists votes_voter_id_fkey;
 
--- Ensure the trusted server-side API can manage sessions and insert votes.
-grant all on public.browser_voter_sessions to service_role;
+-- All vote writes must go through the trusted server-side API/RPC.
+drop policy if exists "Users can insert their own votes" on public.votes;
+revoke insert on public.votes from public, anon, authenticated;
 grant insert on public.votes to service_role;
 
--- Existing votes_voter_id_category_key enforces one vote per browser identity/category.
--- Keep it. A database unique violation is handled as a duplicate-vote response.
+-- Atomic server-side validation + insert. The service_role key must never reach
+-- browser code. The function deliberately remains SECURITY INVOKER.
+create or replace function public.submit_browser_vote(
+    p_voter_id uuid,
+    p_nomination_id bigint,
+    p_ip_address text default null,
+    p_user_agent text default null
+)
+returns void
+language plpgsql
+set search_path = ''
+as $function$
+declare
+    v_role text;
+    v_category text;
+    v_voting_open boolean;
+    v_start_time timestamptz;
+    v_close_time timestamptz;
+begin
+    v_role := auth.jwt() ->> 'role';
+    if v_role is distinct from 'service_role' then
+        raise exception 'Not authorised to submit browser votes' using errcode = '42501';
+    end if;
+
+    perform 1
+      from public.browser_voter_sessions s
+     where s.id = p_voter_id
+       and s.revoked_at is null
+       and s.expires_at > pg_catalog.now()
+     for update;
+    if not found then
+        raise exception 'Voting session is invalid or expired' using errcode = '28000';
+    end if;
+
+    select coalesce(max(s.value) filter (where s.key = 'voting_open') = 'true', false),
+           max(nullif(s.value, '')::timestamptz) filter (where s.key = 'voting_start_time'),
+           max(nullif(s.value, '')::timestamptz) filter (where s.key = 'voting_close_time')
+      into v_voting_open, v_start_time, v_close_time
+      from public.settings s
+     where s.key in ('voting_open', 'voting_start_time', 'voting_close_time');
+
+    if not v_voting_open
+       or (v_start_time is not null and pg_catalog.now() < v_start_time)
+       or (v_close_time is not null and pg_catalog.now() >= v_close_time) then
+        raise exception 'Voting is currently closed' using errcode = '55000';
+    end if;
+
+    select n.category
+      into v_category
+      from public.nominations n
+     where n.id = p_nomination_id
+       and n.merged_into_id is null
+     for share;
+    if not found or v_category is null then
+        raise exception 'Nominee is not eligible for voting' using errcode = '22023';
+    end if;
+
+    if not exists (
+        select 1
+          from public.nominations eligible
+         where (eligible.id = p_nomination_id or eligible.merged_into_id = p_nomination_id)
+           and eligible.ready_for_voting is true
+           and eligible.stage = 'finalist'
+    ) then
+        raise exception 'Nominee is not eligible for voting' using errcode = '22023';
+    end if;
+
+    insert into public.votes (nomination_id, voter_id, category, ip_address, user_agent)
+    values (p_nomination_id, p_voter_id, v_category,
+            nullif(pg_catalog.left(p_ip_address, 128), ''),
+            nullif(pg_catalog.left(p_user_agent, 500), ''));
+end;
+$function$;
+
+revoke all on function public.submit_browser_vote(uuid, bigint, text, text)
+    from public, anon, authenticated;
+grant execute on function public.submit_browser_vote(uuid, bigint, text, text)
+    to service_role;
