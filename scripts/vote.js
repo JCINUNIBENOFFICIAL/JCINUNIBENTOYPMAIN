@@ -12,6 +12,7 @@ const ballotEl = document.getElementById('voting-ballot');
 const ballotMessageEl = document.getElementById('ballot-message');
 let selectedNominationId = null;
 let ballotOpen = false;
+const completedCategories = new Set();
 let ballotInitialized = false;
 const searchEl = document.getElementById('nominee-search');
 let latestCategories = [];
@@ -109,6 +110,7 @@ function renderBallot() {
   }
   let categoryIndex = 0;
   groups.forEach((nominees, categoryName) => {
+    if (completedCategories.has(categoryName)) return;
     const section = document.createElement('section');
     section.className = 'category-card ballot-category';
     section.dataset.category = categoryName;
@@ -143,6 +145,9 @@ function renderBallot() {
     ballotEl.append(section);
     categoryIndex += 1;
   });
+  if (!ballotEl.children.length) ballotEl.textContent = completedCategories.size
+    ? 'You have already voted in every category available to this browser.'
+    : 'No ballot categories are available.';
 }
 
 async function initializeBallot() {
@@ -156,7 +161,9 @@ async function initializeBallot() {
       body: '{}'
     });
     if (!response.ok) throw new Error('Voting session could not be initialized.');
-    if (ballotMessageEl) ballotMessageEl.textContent = 'Choose one nominee in a category. This browser can submit one vote per category.';
+    const session = await response.json();
+    (session.voted_categories || []).forEach(category => completedCategories.add(category));
+    if (ballotMessageEl) ballotMessageEl.textContent = 'Choose one nominee in each category. This browser can submit one vote per category.';
   } catch (error) {
     console.warn('Voting session unavailable:', error);
     if (ballotMessageEl) ballotMessageEl.textContent = 'The ballot is not available on this preview host yet. Please use the official voting website when voting opens.';
@@ -170,6 +177,7 @@ async function submitVote(nominationId, section, button) {
   button.disabled = true;
   button.textContent = 'Submitting…';
   try {
+    const categoryName = section.dataset.category;
     const response = await fetch('/api/submit-vote', {
       method: 'POST',
       credentials: 'same-origin',
@@ -178,6 +186,7 @@ async function submitVote(nominationId, section, button) {
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(result.error || 'Your vote could not be recorded.');
+    completedCategories.add(categoryName);
     section.replaceChildren();
     const success = document.createElement('p');
     success.className = 'ballot-success';
@@ -202,8 +211,8 @@ async function loadStandings() {
 
     latestCategories = normalizeCategories(data);
     ballotOpen = data.voting_open === true || String(data.voting_open).toLowerCase() === 'true';
-    renderBallot();
     await initializeBallot();
+    renderBallot();
     const allNominees = latestCategories.flatMap(group => group.nominees);
     const totalVotes = allNominees.reduce((sum, nominee) => sum + Number(nominee.vote_count ?? nominee.votes ?? 0), 0);
     setText('nominee-total', number(allNominees.length));
