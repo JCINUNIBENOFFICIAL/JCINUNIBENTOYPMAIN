@@ -10,8 +10,8 @@ const messageEl = document.getElementById('standings-message');
 const listEl = document.getElementById('category-standings');
 const ballotEl = document.getElementById('voting-ballot');
 const ballotMessageEl = document.getElementById('ballot-message');
-const voteSubmitEl = document.getElementById('submit-vote-btn');
 let selectedNominationId = null;
+let ballotOpen = false;
 let ballotInitialized = false;
 const searchEl = document.getElementById('nominee-search');
 let latestCategories = [];
@@ -94,6 +94,10 @@ function renderStandings() {
 function renderBallot() {
   if (!ballotEl) return;
   ballotEl.replaceChildren();
+  if (!ballotOpen) {
+    ballotEl.textContent = 'Voting is currently closed.';
+    return;
+  }
   const groups = new Map();
   latestCategories.forEach(category => {
     const rows = category.nominees.filter(n => Number.isSafeInteger(Number(n.nomination_id)) && Number(n.nomination_id) > 0);
@@ -103,9 +107,11 @@ function renderBallot() {
     ballotEl.textContent = 'No eligible nominees are available for voting yet.';
     return;
   }
+  let categoryIndex = 0;
   groups.forEach((nominees, categoryName) => {
     const section = document.createElement('section');
-    section.className = 'ballot-category';
+    section.className = 'category-card ballot-category';
+    section.dataset.category = categoryName;
     const heading = document.createElement('h3');
     heading.textContent = categoryName;
     section.append(heading);
@@ -114,18 +120,28 @@ function renderBallot() {
       label.className = 'ballot-option';
       const radio = document.createElement('input');
       radio.type = 'radio';
-      radio.name = 'nomination_id';
+      radio.name = 'nomination_id_' + categoryIndex;
       radio.value = String(nominee.nomination_id);
-      radio.addEventListener('change', () => {
-        selectedNominationId = Number(radio.value);
-        if (voteSubmitEl) voteSubmitEl.disabled = false;
-      });
       const name = document.createElement('span');
       name.textContent = String(nominee.nominee_name || 'Nominee');
       label.append(radio, name);
       section.append(label);
     });
+    const submit = document.createElement('button');
+    submit.type = 'button';
+    submit.className = 'btn ballot-submit';
+    submit.textContent = 'Vote in this category';
+    submit.disabled = true;
+    submit.addEventListener('click', () => {
+      const selected = section.querySelector('input[type="radio"]:checked');
+      if (selected) submitVote(Number(selected.value), section, submit);
+    });
+    section.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => { submit.disabled = false; });
+    });
+    section.append(submit);
     ballotEl.append(section);
+    categoryIndex += 1;
   });
 }
 
@@ -148,29 +164,30 @@ async function initializeBallot() {
   }
 }
 
-async function submitVote() {
-  if (!selectedNominationId || !voteSubmitEl) return;
-  if (!window.confirm('Submit your vote for this nominee? You can vote only once per category in this browser.')) return;
-  voteSubmitEl.disabled = true;
-  voteSubmitEl.textContent = 'Submitting…';
+async function submitVote(nominationId, section, button) {
+  if (!nominationId || !button) return;
+  if (!window.confirm('Submit your vote for this nominee? This browser can vote only once in this category.')) return;
+  button.disabled = true;
+  button.textContent = 'Submitting…';
   try {
     const response = await fetch('/api/submit-vote', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nomination_id: selectedNominationId })
+      body: JSON.stringify({ nomination_id: nominationId })
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(result.error || 'Your vote could not be recorded.');
-    if (ballotMessageEl) ballotMessageEl.textContent = result.message || 'Your vote has been recorded.';
-    if (ballotEl) ballotEl.replaceChildren();
-    selectedNominationId = null;
+    section.replaceChildren();
+    const success = document.createElement('p');
+    success.className = 'ballot-success';
+    success.textContent = result.message || 'Your vote has been recorded in this category.';
+    section.append(success);
     await loadStandings();
   } catch (error) {
     if (ballotMessageEl) ballotMessageEl.textContent = error.message;
-    voteSubmitEl.disabled = false;
-  } finally {
-    voteSubmitEl.textContent = 'Submit vote';
+    button.disabled = false;
+    button.textContent = 'Vote in this category';
   }
 }
 
@@ -184,6 +201,7 @@ async function loadStandings() {
     if (!data || typeof data !== 'object') throw new Error('No public standings were returned.');
 
     latestCategories = normalizeCategories(data);
+    ballotOpen = data.voting_open === true || String(data.voting_open).toLowerCase() === 'true';
     renderBallot();
     await initializeBallot();
     const allNominees = latestCategories.flatMap(group => group.nominees);
@@ -217,6 +235,6 @@ async function loadStandings() {
 }
 
 searchEl?.addEventListener('input', renderStandings);
-voteSubmitEl?.addEventListener('click', submitVote);
+
 loadStandings();
 window.setInterval(loadStandings, refreshEveryMs);
