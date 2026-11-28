@@ -51,8 +51,11 @@ as $function$
     select pg_catalog.jsonb_build_object(
         'voting_open',
         (state.flag_open
-         and (state.starts_at is null or pg_catalog.now() >= state.starts_at)
-         and (state.closes_at is null or pg_catalog.now() < state.closes_at)),
+         and state.starts_at is not null
+         and state.closes_at is not null
+         and state.starts_at < state.closes_at
+         and pg_catalog.now() >= state.starts_at
+         and pg_catalog.now() < state.closes_at),
         'total_votes',
         coalesce((select pg_catalog.sum(nt.vote_count) from nominee_totals nt), 0),
         'nominees',
