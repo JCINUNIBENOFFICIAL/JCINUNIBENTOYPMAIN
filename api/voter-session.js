@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   if (!verifySameOrigin(req)) return json(res, 403, { error: 'Request origin not allowed.' });
   try {
     const session = await getOrCreateSession(req, res);
-    const votes = await db('votes?select=category&voter_id=eq.' + encodeURIComponent(session.id));
+    const votes = await db('browser_votes?select=category&voter_session_id=eq.' + encodeURIComponent(session.id));
     const votedCategories = [...new Set((votes || []).map(row => row.category).filter(Boolean))];
     return json(res, 200, { ok: true, session_created: session.created, voted_categories: votedCategories });
   } catch (error) {
