@@ -1,4 +1,4 @@
-import { db, json, requireSession, verifySameOrigin, votingIsOpen } from './_voting.js';
+import { db, json, requireSession, verifySameOrigin, votingIsOpen } from '../lib/voting.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed.' });
