@@ -1,52 +1,63 @@
 # Cookie-based voting API setup
 
-The voting API in this repository uses Vercel Node.js serverless functions under `/api`.
-It must be deployed on the **same origin** as the public voting page so the browser's
-HttpOnly cookie is first-party. A static GitHub Pages deployment cannot run these API
-routes.
+The voting API uses Vercel Node.js serverless functions under `/api`. It must be
+deployed on the **same origin** as the public voting page so the HttpOnly cookie is
+first-party. A static GitHub Pages deployment cannot run these API routes.
 
-## Required Vercel environment variable
+## Required Vercel environment variables
 
-Set this server-side variable in the Vercel project for the public site:
+Set these server-side variables in the Vercel project for the public site:
 
 - `SUPABASE_URL`: `https://xbrndlhzaluksjhdbnur.supabase.co`
-- `SUPABASE_SERVICE_ROLE_KEY`: Supabase server-only service-role secret. Never use a
-  publishable/anon key here and never prefix this secret with `NEXT_PUBLIC_`.
+- `SUPABASE_SERVICE_ROLE_KEY`: the Supabase server-only service-role secret.
 
-Do not commit secrets to this repository. Restrict this key to Vercel server-side
-environment variables.
+Never expose the service-role secret in browser code, commit it to this repository, or
+prefix it with `NEXT_PUBLIC_`.
 
-## Database proposals that must be reviewed and applied
+## Database proposals and required order
 
-1. `database/proposals/browser-cookie-voting.sql`
-   - creates the private browser session table;
-   - removes the auth.users foreign key from `votes.voter_id`, allowing UUIDs for
-     server-issued browser identities while preserving existing vote IDs;
-   - retains the unique one-vote-per-identity/category constraint.
-2. `database/proposals/manual-nomination-soft-merge.sql` in the admin dashboard repo
-   - adds the nullable `nominations.merged_into_id` relationship and merge audit table;
-   - installs the administrator-gated soft-merge RPC.
-3. `database/proposals/public-voting-standings.sql`
-   - returns one public row for each confirmed canonical nominee;
-   - includes the canonical nomination ID for the ballot and aggregates votes against
-     retained linked nomination records.
+These files are proposals only. Review and obtain explicit approval before applying
+any SQL to Supabase.
 
-Apply and verify the admin soft-merge schema before the public standings function,
-because the latter reads `merged_into_id`. Apply none of these SQL proposals without
-review and explicit approval.
+1. Admin dashboard repository:
+   `database/proposals/manual-nomination-soft-merge.sql`
+   - Adds `nominations.merged_into_id` and the private merge audit table.
+   - Adds a guarded, administrator-only soft-merge RPC.
+   - Does not rename, delete, or overwrite original nomination data.
+2. Public website repository:
+   `database/proposals/browser-cookie-voting.sql`
+   - Creates the private browser session table.
+   - Removes the `auth.users` foreign key from `votes.voter_id`; existing vote rows
+     are retained and the existing unique (voter_id, category) constraint remains.
+   - Revokes direct vote insertion from browser roles and provides the atomic
+     `submit_browser_vote` RPC for the server-side API.
+3. Public website repository:
+   `database/proposals/public-voting-standings.sql`
+   - Returns one aggregate row per canonical nominee.
+   - Includes canonical nomination IDs for the ballot and counts votes against linked
+     records.
+   - Reports voting open only when the Boolean setting and configured start/close
+     timestamps all permit voting.
+
+The admin soft-merge schema must be applied before the voting and standings proposals,
+because both voting functions rely on `nominations.merged_into_id`. The voting
+proposal must be applied before the API can create sessions or submit votes.
 
 ## Behaviour and limitations
 
 - The API issues a random 256-bit token in an HttpOnly, Secure, SameSite=Lax cookie.
   Only the SHA-256 token hash is stored in the database.
-- The API validates the cookie, nominee eligibility, finalist stage, voting window,
-  and category server-side. The database unique constraint prevents a second vote
-  from the same browser identity in the same category.
+- The server validates the session, nominee eligibility, finalist stage, voting window,
+  and category in one database transaction before inserting a vote.
+- The database unique constraint enforces one vote per browser identity/category.
+  Concurrent submissions from the same session are serialized and duplicates rejected.
 - The browser can vote once in each category, not just once overall.
 - Clearing cookies, using private browsing, another browser, or another device creates
-  a new browser identity. Cookie-based voting is therefore a low-friction deterrent,
-  not verified one-person-one-vote identity.
-- The public standings RPC exposes aggregate counts and nominee identifiers only.
-  Individual voter identity and vote metadata are not returned to the public.
-- Do not enable voting until the migrations, Vercel environment, same-origin API
+  a new browser identity. This is a low-friction deterrent, not verified
+  one-person-one-vote identity.
+- Public standings expose aggregate counts and canonical nomination identifiers only;
+  voter identity and vote metadata are not returned.
+- Expired browser sessions are not currently automatically purged. A scheduled cleanup
+  can be added later after operational review.
+- Do not enable voting until the SQL proposals, Vercel environment, same-origin API
   deployment, and mobile browser tests have all been completed.
