@@ -26,30 +26,31 @@ any SQL to Supabase.
    - Does not rename, delete, or overwrite original nomination data.
 2. Public website repository:
    `database/proposals/browser-cookie-voting.sql`
-   - Creates the private browser session table.
-   - Removes the `auth.users` foreign key from `votes.voter_id`; existing vote rows
-     are retained and the existing unique (voter_id, category) constraint remains.
-   - Revokes direct vote insertion from browser roles and provides the atomic
-     `submit_browser_vote` RPC for the server-side API.
+   - Creates a private browser session table and a separate `browser_votes` table.
+   - Keeps the existing `votes` table, auth.users foreign key, policies, grants,
+     unique constraint, and existing vote records unchanged.
+   - Adds a server-only atomic RPC for browser-cookie vote submissions.
 3. Public website repository:
    `database/proposals/public-voting-standings.sql`
    - Returns one aggregate row per canonical nominee.
-   - Includes canonical nomination IDs for the ballot and counts votes against linked
-     records.
+   - Includes canonical nomination IDs for the ballot and aggregates both existing
+     authenticated votes and new browser-cookie votes, including linked records.
    - Reports voting open only when the Boolean setting and configured start/close
      timestamps all permit voting.
 
-The admin soft-merge schema must be applied before the voting and standings proposals,
-because both voting functions rely on `nominations.merged_into_id`. The voting
-proposal must be applied before the API can create sessions or submit votes.
+Apply in this order after review: admin soft-merge schema, browser-cookie voting
+schema, then public standings function. The browser voting API requires the first two
+proposals. Do not apply any proposal without explicit approval.
 
 ## Behaviour and limitations
 
 - The API issues a random 256-bit token in an HttpOnly, Secure, SameSite=Lax cookie.
   Only the SHA-256 token hash is stored in the database.
+- Browser-cookie votes are kept in `browser_votes`; the existing authenticated
+  `votes` table is not modified by this feature.
 - The server validates the session, nominee eligibility, finalist stage, voting window,
-  and category in one database transaction before inserting a vote.
-- The database unique constraint enforces one vote per browser identity/category.
+  and category in one database transaction before inserting a browser vote.
+- A database unique constraint enforces one vote per browser identity/category.
   Concurrent submissions from the same session are serialized and duplicates rejected.
 - The browser can vote once in each category, not just once overall.
 - Clearing cookies, using private browsing, another browser, or another device creates
