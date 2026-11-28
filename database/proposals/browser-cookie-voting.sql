@@ -83,9 +83,14 @@ begin
       from public.settings s
      where s.key in ('voting_open', 'voting_start_time', 'voting_close_time');
 
+    -- Fail closed: a live flag alone is not a valid voting schedule.
+    -- Both boundaries must exist, be ordered, and contain the current time.
     if not v_voting_open
-       or (v_start_time is not null and pg_catalog.now() < v_start_time)
-       or (v_close_time is not null and pg_catalog.now() >= v_close_time) then
+       or v_start_time is null
+       or v_close_time is null
+       or v_start_time >= v_close_time
+       or pg_catalog.now() < v_start_time
+       or pg_catalog.now() >= v_close_time then
         raise exception 'Voting is currently closed' using errcode = '55000';
     end if;
 
