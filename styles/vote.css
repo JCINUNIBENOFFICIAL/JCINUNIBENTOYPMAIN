@@ -41,3 +41,11 @@ footer p { margin:0; text-align:center; }
  .nominee-row { grid-template-columns:36px minmax(0,1fr) auto; gap:.5rem; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }
+
+/* Ballot controls */
+.ballot-category { display:flex; flex-direction:column; gap:.65rem; }
+.ballot-option { display:flex; align-items:center; gap:.7rem; padding:.8rem; border:1px solid #e5eaf2; border-radius:9px; cursor:pointer; }
+.ballot-option input { width:18px; height:18px; accent-color:#073779; }
+.ballot-submit { align-self:flex-start; margin-top:.5rem; border:0; border-radius:8px; padding:.75rem 1.1rem; background:#073779; color:#fff; font:inherit; font-weight:750; cursor:pointer; }
+.ballot-submit:disabled { opacity:.45; cursor:not-allowed; }
+.ballot-success { margin:0; color:#166534; font-weight:700; }
