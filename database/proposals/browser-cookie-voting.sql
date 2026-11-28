@@ -1,6 +1,6 @@
 -- Proposal only. Do not apply until reviewed and explicitly approved.
--- Browser-cookie voting: only a SHA-256 token hash is stored; raw tokens remain in
--- Secure, HttpOnly, SameSite=Lax cookies. This does not prove one human = one vote.
+-- Browser-cookie voting is stored separately from authenticated votes. This preserves
+-- the existing votes table, its auth.users foreign key, RLS policies, grants and data.
 
 create table if not exists public.browser_voter_sessions (
     id uuid primary key default gen_random_uuid(),
@@ -20,21 +20,33 @@ alter table public.browser_voter_sessions enable row level security;
 revoke all on public.browser_voter_sessions from public, anon, authenticated;
 grant select, insert, update on public.browser_voter_sessions to service_role;
 
--- Browser session UUIDs are not auth.users IDs. Removing this FK does not delete
--- existing vote rows. The existing (voter_id, category) unique constraint remains.
-alter table public.votes
-    drop constraint if exists votes_voter_id_fkey;
+-- Keep cookie/browser votes separate so votes.voter_id remains an auth.users UUID
+-- and the existing votes constraints and authenticated workflows are untouched.
+create table if not exists public.browser_votes (
+    id bigint generated always as identity primary key,
+    voter_session_id uuid not null
+        references public.browser_voter_sessions(id) on delete restrict,
+    nomination_id integer not null
+        references public.nominations(id) on delete restrict,
+    category text not null,
+    created_at timestamptz not null default now(),
+    ip_address text,
+    user_agent text,
+    constraint browser_votes_session_category_key unique (voter_session_id, category)
+);
 
--- All vote writes must go through the trusted server-side API/RPC.
-drop policy if exists "Users can insert their own votes" on public.votes;
-revoke insert on public.votes from public, anon, authenticated;
-grant insert on public.votes to service_role;
+create index if not exists idx_browser_votes_nomination_category
+    on public.browser_votes (nomination_id, category);
+
+alter table public.browser_votes enable row level security;
+revoke all on public.browser_votes from public, anon, authenticated;
+grant select, insert on public.browser_votes to service_role;
 
 -- Atomic server-side validation + insert. The service_role key must never reach
--- browser code. The function deliberately remains SECURITY INVOKER.
+-- browser code. SECURITY INVOKER keeps execution limited to service_role grants.
 create or replace function public.submit_browser_vote(
     p_voter_id uuid,
-    p_nomination_id bigint,
+    p_nomination_id integer,
     p_ip_address text default null,
     p_user_agent text default null
 )
@@ -97,14 +109,16 @@ begin
         raise exception 'Nominee is not eligible for voting' using errcode = '22023';
     end if;
 
-    insert into public.votes (nomination_id, voter_id, category, ip_address, user_agent)
-    values (p_nomination_id, p_voter_id, v_category,
-            nullif(pg_catalog.left(p_ip_address, 128), ''),
-            nullif(pg_catalog.left(p_user_agent, 500), ''));
+    insert into public.browser_votes
+        (nomination_id, voter_session_id, category, ip_address, user_agent)
+    values
+        (p_nomination_id, p_voter_id, v_category,
+         nullif(pg_catalog.left(p_ip_address, 128), ''),
+         nullif(pg_catalog.left(p_user_agent, 500), ''));
 end;
 $function$;
 
-revoke all on function public.submit_browser_vote(uuid, bigint, text, text)
+revoke all on function public.submit_browser_vote(uuid, integer, text, text)
     from public, anon, authenticated;
-grant execute on function public.submit_browser_vote(uuid, bigint, text, text)
+grant execute on function public.submit_browser_vote(uuid, integer, text, text)
     to service_role;
