@@ -19,5 +19,9 @@ revoke all on public.browser_voter_sessions from public, anon, authenticated;
 alter table public.votes
     drop constraint if exists votes_voter_id_fkey;
 
+-- Ensure the trusted server-side API can manage sessions and insert votes.
+grant all on public.browser_voter_sessions to service_role;
+grant insert on public.votes to service_role;
+
 -- Existing votes_voter_id_category_key enforces one vote per browser identity/category.
 -- Keep it. A database unique violation is handled as a duplicate-vote response.
