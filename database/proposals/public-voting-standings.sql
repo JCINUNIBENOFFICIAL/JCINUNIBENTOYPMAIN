@@ -1,6 +1,7 @@
 -- Public aggregate voting standings endpoint.
--- Requires the manual soft-merge migration to be applied first.
--- Returns aggregate counts and canonical nomination IDs only; never voter metadata.
+-- Requires manual-nomination-soft-merge.sql and browser-cookie-voting.sql first.
+-- Aggregates both legacy authenticated votes and cookie-browser votes, while
+-- exposing only aggregate counts and canonical nomination IDs.
 
 create or replace function public.get_public_voting_standings()
 returns jsonb
@@ -29,13 +30,20 @@ as $function$
                 and eligible.stage = 'finalist'
           )
     ),
+    all_vote_rows as (
+        select v.nomination_id, v.category
+        from public.votes v
+        union all
+        select bv.nomination_id, bv.category
+        from public.browser_votes bv
+    ),
     nominee_totals as (
         select root.nominee_id, root.nominee_name, root.category,
-               count(v.id)::bigint as vote_count
+               count(v.nomination_id)::bigint as vote_count
         from eligible_roots root
         left join public.nominations member
           on member.id = root.nominee_id or member.merged_into_id = root.nominee_id
-        left join public.votes v
+        left join all_vote_rows v
           on v.nomination_id = member.id
          and v.category = root.category
         group by root.nominee_id, root.nominee_name, root.category
