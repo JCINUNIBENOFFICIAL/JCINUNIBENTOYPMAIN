@@ -1,0 +1,45 @@
+import { db, json, requireSession, verifySameOrigin, votingIsOpen } from './_voting.js';
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed.' });
+  if (!verifySameOrigin(req)) return json(res, 403, { error: 'Request origin not allowed.' });
+
+  try {
+    const voterId = await requireSession(req);
+    if (!voterId) return json(res, 401, { error: 'Your voting session is missing. Refresh the page and try again.' });
+
+    const nominationId = Number(req.body?.nomination_id);
+    if (!Number.isSafeInteger(nominationId) || nominationId < 1) {
+      return json(res, 400, { error: 'Choose a valid nominee.' });
+    }
+    if (!(await votingIsOpen())) return json(res, 403, { error: 'Voting is currently closed.' });
+
+    const nominees = await db('nominations?select=id,category,ready_for_voting,stage&id=eq.' +
+      nominationId + '&limit=1');
+    const nominee = nominees?.[0];
+    if (!nominee || nominee.ready_for_voting !== true || nominee.stage !== 'finalist' || !nominee.category) {
+      return json(res, 400, { error: 'This nominee is not currently eligible for voting.' });
+    }
+
+    const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    const userAgent = String(req.headers['user-agent'] || '').slice(0, 500);
+    await db('votes', {
+      method: 'POST',
+      headers: { Prefer: 'return=minimal' },
+      body: JSON.stringify({
+        nomination_id: nominee.id,
+        voter_id: voterId,
+        category: nominee.category,
+        ip_address: forwarded || null,
+        user_agent: userAgent || null
+      })
+    });
+    return json(res, 201, { ok: true, message: 'Your vote has been recorded.' });
+  } catch (error) {
+    if (error.code === '23505') {
+      return json(res, 409, { error: 'This browser has already voted in this category.' });
+    }
+    console.error('Vote submission failed:', error);
+    return json(res, 503, { error: 'We could not record your vote. Please try again shortly.' });
+  }
+}
