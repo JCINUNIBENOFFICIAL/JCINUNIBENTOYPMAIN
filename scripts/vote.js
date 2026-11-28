@@ -8,6 +8,11 @@ const refreshEveryMs = 30000;
 const statusEl = document.getElementById('voting-status');
 const messageEl = document.getElementById('standings-message');
 const listEl = document.getElementById('category-standings');
+const ballotEl = document.getElementById('voting-ballot');
+const ballotMessageEl = document.getElementById('ballot-message');
+const voteSubmitEl = document.getElementById('submit-vote-btn');
+let selectedNominationId = null;
+let ballotInitialized = false;
 const searchEl = document.getElementById('nominee-search');
 let latestCategories = [];
 let requestInFlight = false;
@@ -85,6 +90,90 @@ function renderStandings() {
   if (!shown) messageEl.textContent = query ? 'No nominees match your search.' : 'No eligible nominees or live standings are available yet.';
 }
 
+
+function renderBallot() {
+  if (!ballotEl) return;
+  ballotEl.replaceChildren();
+  const groups = new Map();
+  latestCategories.forEach(category => {
+    const rows = category.nominees.filter(n => Number.isSafeInteger(Number(n.nomination_id)) && Number(n.nomination_id) > 0);
+    if (rows.length) groups.set(category.name, rows);
+  });
+  if (!groups.size) {
+    ballotEl.textContent = 'No eligible nominees are available for voting yet.';
+    return;
+  }
+  groups.forEach((nominees, categoryName) => {
+    const section = document.createElement('section');
+    section.className = 'ballot-category';
+    const heading = document.createElement('h3');
+    heading.textContent = categoryName;
+    section.append(heading);
+    nominees.forEach(nominee => {
+      const label = document.createElement('label');
+      label.className = 'ballot-option';
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'nomination_id';
+      radio.value = String(nominee.nomination_id);
+      radio.addEventListener('change', () => {
+        selectedNominationId = Number(radio.value);
+        if (voteSubmitEl) voteSubmitEl.disabled = false;
+      });
+      const name = document.createElement('span');
+      name.textContent = String(nominee.nominee_name || 'Nominee');
+      label.append(radio, name);
+      section.append(label);
+    });
+    ballotEl.append(section);
+  });
+}
+
+async function initializeBallot() {
+  if (!ballotEl || ballotInitialized) return;
+  ballotInitialized = true;
+  try {
+    const response = await fetch('/api/voter-session', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    if (!response.ok) throw new Error('Voting session could not be initialized.');
+    if (ballotMessageEl) ballotMessageEl.textContent = 'Choose one nominee in a category. This browser can submit one vote per category.';
+  } catch (error) {
+    console.warn('Voting session unavailable:', error);
+    if (ballotMessageEl) ballotMessageEl.textContent = 'The ballot is not available on this preview host yet. Please use the official voting website when voting opens.';
+    if (voteSubmitEl) voteSubmitEl.disabled = true;
+  }
+}
+
+async function submitVote() {
+  if (!selectedNominationId || !voteSubmitEl) return;
+  if (!window.confirm('Submit your vote for this nominee? You can vote only once per category in this browser.')) return;
+  voteSubmitEl.disabled = true;
+  voteSubmitEl.textContent = 'Submitting…';
+  try {
+    const response = await fetch('/api/submit-vote', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nomination_id: selectedNominationId })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || 'Your vote could not be recorded.');
+    if (ballotMessageEl) ballotMessageEl.textContent = result.message || 'Your vote has been recorded.';
+    if (ballotEl) ballotEl.replaceChildren();
+    selectedNominationId = null;
+    await loadStandings();
+  } catch (error) {
+    if (ballotMessageEl) ballotMessageEl.textContent = error.message;
+    voteSubmitEl.disabled = false;
+  } finally {
+    voteSubmitEl.textContent = 'Submit vote';
+  }
+}
+
 async function loadStandings() {
   if (requestInFlight) return;
   requestInFlight = true;
@@ -95,6 +184,8 @@ async function loadStandings() {
     if (!data || typeof data !== 'object') throw new Error('No public standings were returned.');
 
     latestCategories = normalizeCategories(data);
+    renderBallot();
+    await initializeBallot();
     const allNominees = latestCategories.flatMap(group => group.nominees);
     const totalVotes = allNominees.reduce((sum, nominee) => sum + Number(nominee.vote_count ?? nominee.votes ?? 0), 0);
     setText('nominee-total', number(allNominees.length));
@@ -126,5 +217,6 @@ async function loadStandings() {
 }
 
 searchEl?.addEventListener('input', renderStandings);
+voteSubmitEl?.addEventListener('click', submitVote);
 loadStandings();
 window.setInterval(loadStandings, refreshEveryMs);
