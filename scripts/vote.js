@@ -165,9 +165,9 @@ async function initializeBallot() {
     (session.voted_categories || []).forEach(category => completedCategories.add(category));
     if (ballotMessageEl) ballotMessageEl.textContent = 'Choose one nominee in each category. This browser can submit one vote per category.';
   } catch (error) {
+    ballotInitialized = false;
     console.warn('Voting session unavailable:', error);
     if (ballotMessageEl) ballotMessageEl.textContent = 'The ballot is not available on this preview host yet. Please use the official voting website when voting opens.';
-    if (voteSubmitEl) voteSubmitEl.disabled = true;
   }
 }
 
