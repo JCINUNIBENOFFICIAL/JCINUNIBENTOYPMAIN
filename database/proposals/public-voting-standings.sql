@@ -1,17 +1,8 @@
 -- Public aggregate voting standings endpoint.
--- Deployed to Supabase project xbrndlhzaluksjhdbnur through migration
--- create_public_voting_standings_rpc.
---
--- This endpoint returns nominee names, categories, aggregate vote counts,
--- total votes for eligible nominees, and the voting_open flag only.
--- It never returns voter IDs, emails, IP addresses, user agents, or ballots.
---
--- SECURITY DEFINER is required because the source tables have RLS enabled
--- and public visitors must not receive direct table access. The function:
---   * has no caller-controlled parameters or dynamic SQL;
---   * uses an empty, fixed search_path and fully-qualified table names;
---   * returns only aggregates for nominees explicitly marked ready_for_voting;
---   * has EXECUTE revoked from PUBLIC and granted only to anon/authenticated.
+-- Proposal update: confirmed soft-merged nomination records display as one canonical
+-- nominee in the same category. Unmerged name-similar records remain separate.
+-- Votes against retained source records are included in the canonical nominee total.
+-- Only aggregate counts and nomination IDs are exposed; voter metadata is never returned.
 
 CREATE OR REPLACE FUNCTION public.get_public_voting_standings()
 RETURNS jsonb
@@ -20,49 +11,54 @@ STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
-    WITH eligible_nominees AS (
-        SELECT n.id, n.nominee_name, n.category
-        FROM public.nominations AS n
-        WHERE n.ready_for_voting IS TRUE
+    WITH eligible_roots AS (
+        SELECT root.id AS nominee_id, root.nominee_name, root.category
+        FROM public.nominations root
+        WHERE root.merged_into_id IS NULL
+          AND EXISTS (
+              SELECT 1
+              FROM public.nominations eligible
+              WHERE (eligible.id = root.id OR eligible.merged_into_id = root.id)
+                AND eligible.ready_for_voting IS TRUE
+                AND eligible.stage = 'finalist'
+          )
     ),
     nominee_totals AS (
-        SELECT
-            e.id AS nominee_id,
-            e.nominee_name,
-            e.category,
-            COUNT(v.id)::bigint AS vote_count
-        FROM eligible_nominees AS e
-        LEFT JOIN public.votes AS v
-          ON v.nomination_id = e.id
-         AND v.category = e.category
-        GROUP BY e.id, e.nominee_name, e.category
+        SELECT root.nominee_id, root.nominee_name, root.category,
+               COUNT(v.id)::bigint AS vote_count
+        FROM eligible_roots root
+        LEFT JOIN public.nominations member
+          ON member.id = root.nominee_id OR member.merged_into_id = root.nominee_id
+        LEFT JOIN public.votes v
+          ON v.nomination_id = member.id
+         AND v.category = root.category
+        GROUP BY root.nominee_id, root.nominee_name, root.category
     )
     SELECT pg_catalog.jsonb_build_object(
         'voting_open',
         COALESCE((
             SELECT s.value = 'true'
-            FROM public.settings AS s
+            FROM public.settings s
             WHERE s.key = 'voting_open'
             LIMIT 1
         ), false),
         'total_votes',
-        COALESCE((SELECT pg_catalog.sum(nt.vote_count) FROM nominee_totals AS nt), 0),
+        COALESCE((SELECT pg_catalog.sum(nt.vote_count) FROM nominee_totals nt), 0),
         'nominees',
         COALESCE((
             SELECT pg_catalog.jsonb_agg(
                 pg_catalog.jsonb_build_object(
+                    'nomination_id', nt.nominee_id,
                     'nominee_name', nt.nominee_name,
                     'category', nt.category,
                     'vote_count', nt.vote_count
                 )
                 ORDER BY nt.category, nt.vote_count DESC, nt.nominee_name
             )
-            FROM nominee_totals AS nt
+            FROM nominee_totals nt
         ), '[]'::jsonb)
     );
 $function$;
 
-REVOKE ALL ON FUNCTION public.get_public_voting_standings() FROM PUBLIC;
-REVOKE ALL ON FUNCTION public.get_public_voting_standings() FROM anon;
-REVOKE ALL ON FUNCTION public.get_public_voting_standings() FROM authenticated;
+REVOKE ALL ON FUNCTION public.get_public_voting_standings() FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_public_voting_standings() TO anon, authenticated;
