@@ -1,0 +1,8 @@
+{
+  "name": "jcinuniben-toyp-public-voting",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
+}
