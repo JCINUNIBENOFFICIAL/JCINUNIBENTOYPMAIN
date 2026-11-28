@@ -14,10 +14,15 @@ export default async function handler(req, res) {
     }
     if (!(await votingIsOpen())) return json(res, 403, { error: 'Voting is currently closed.' });
 
-    const nominees = await db('nominations?select=id,category,ready_for_voting,stage&id=eq.' +
-      nominationId + '&limit=1');
-    const nominee = nominees?.[0];
-    if (!nominee || nominee.ready_for_voting !== true || nominee.stage !== 'finalist' || !nominee.category) {
+    const roots = await db('nominations?select=id,category,merged_into_id&id=eq.' +
+      nominationId + '&merged_into_id=is.null&limit=1');
+    const nominee = roots?.[0];
+    if (!nominee || !nominee.category) {
+      return json(res, 400, { error: 'This nominee is not currently eligible for voting.' });
+    }
+    const eligibleMembers = await db('nominations?select=id&or=(id.eq.' + nominationId +
+      ',merged_into_id.eq.' + nominationId + ')&ready_for_voting=is.true&stage=eq.finalist&limit=1');
+    if (!eligibleMembers?.length) {
       return json(res, 400, { error: 'This nominee is not currently eligible for voting.' });
     }
 
